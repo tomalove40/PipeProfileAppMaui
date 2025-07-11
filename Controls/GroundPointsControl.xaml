@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="PipeProfileAppMaui.Controls.GroundPointsControl"
+    x:Name="root">
+
+    <VerticalStackLayout Padding="10" Spacing="5">
+        <!-- Заголовок -->
+        <Label Text="Точки грунта"
+           FontAttributes="Bold" />
+
+        <!-- Список точек -->
+        <CollectionView ItemsSource="{Binding GroundPoints, Source={x:Reference root}}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid ColumnDefinitions="40,*,*,Auto,Auto,Auto" Padding="2">
+                        <Label   Grid.Column="0"
+                 Text="{Binding Index}"
+                 VerticalOptions="Center" />
+
+                        <Entry   Grid.Column="1"
+                 Text="{Binding Distance, Mode=TwoWay}"
+                 Keyboard="Numeric" />
+
+                        <Entry   Grid.Column="2"
+                 Text="{Binding Elevation, Mode=TwoWay}"
+                 Keyboard="Numeric" />
+
+                        <Button  Grid.Column="3"
+                 Text="+"
+                 WidthRequest="30"
+                 Command="{Binding IncreaseDistanceCommand,   Source={x:Reference root}}"
+                 CommandParameter="{Binding .}" />
+
+                        <Button  Grid.Column="4"
+                 Text="−"
+                 WidthRequest="30"
+                 Command="{Binding DecreaseDistanceCommand,   Source={x:Reference root}}"
+                 CommandParameter="{Binding .}" />
+
+                        <Button  Grid.Column="5"
+                 Text="×"
+                 WidthRequest="60"
+                 Command="{Binding RemovePointCommand,        Source={x:Reference root}}"
+                 CommandParameter="{Binding .}" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <!-- Добавить новую точку -->
+        <Button Text="Добавить точку"
+            Command="{Binding AddPointCommand, Source={x:Reference root}}" />
+    </VerticalStackLayout>
+</ContentView>

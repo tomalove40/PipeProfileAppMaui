@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="PipeProfileAppMaui.Controls.PipePointsControl"
+    x:Name="root">
+
+    <VerticalStackLayout Padding="10" Spacing="5">
+        <!-- Заголовок -->
+        <Label Text="Точки трубы" FontAttributes="Bold" />
+
+        <!-- Список точек трубы -->
+        <CollectionView ItemsSource="{Binding PipePoints, Source={x:Reference root}}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid ColumnDefinitions="40,*,*,Auto,Auto,Auto" Padding="2">
+                        <!-- Номер -->
+                        <Label Grid.Column="0"
+                   Text="{Binding Index}"
+                   VerticalOptions="Center" />
+
+                        <!-- Расстояние -->
+                        <Entry Grid.Column="1"
+                   Text="{Binding Distance, Mode=TwoWay}"
+                   Keyboard="Numeric" />
+
+                        <!-- Глубина -->
+                        <Entry Grid.Column="2"
+                   Text="{Binding Depth, Mode=TwoWay}"
+                   Keyboard="Numeric" />
+
+                        <!-- Увеличить расстояние -->
+                        <Button Grid.Column="3"
+                    Text="+"
+                    WidthRequest="30"
+                    Command="{Binding IncreaseDistanceCommand, Source={x:Reference root}}"
+                    CommandParameter="{Binding .}" />
+
+                        <!-- Уменьшить расстояние -->
+                        <Button Grid.Column="4"
+                    Text="−"
+                    WidthRequest="30"
+                    Command="{Binding DecreaseDistanceCommand, Source={x:Reference root}}"
+                    CommandParameter="{Binding .}" />
+
+                        <!-- Удалить точку -->
+                        <Button Grid.Column="5"
+                    Text="×"
+                    WidthRequest="60"
+                    Command="{Binding RemovePointCommand, Source={x:Reference root}}"
+                    CommandParameter="{Binding .}" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Кнопка «Добавить точку» -->
+        <Button Text="Добавить точку"
+            Command="{Binding AddPointCommand, Source={x:Reference root}}" />
+    </VerticalStackLayout>
+</ContentView>

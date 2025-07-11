@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ContentPage
+  x:Class="PipeProfileAppMaui.MainPage"
+  xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+  xmlns:viewModels="clr-namespace:PipeProfileAppMaui.ViewModels"
+  xmlns:controls="clr-namespace:PipeProfileAppMaui.Controls"
+  Title="Профиль">
+
+    <ContentPage.Resources>
+        <!-- таб-хедер -->
+        <DataTemplate x:Key="TabHeaderTemplate">
+            <Frame Padding="12,6" Margin="4,2"
+             HasShadow="False"
+             BackgroundColor="{Binding .,
+               Converter={StaticResource SelectedTabBackgroundConverter},
+               ConverterParameter={Binding Source={StaticResource Locator}, Path=RibbonViewModel.SelectedRibbonTab}}">
+                <Label Text="{Binding Header}"
+               FontAttributes="Bold"
+               HorizontalTextAlignment="Center"
+               VerticalTextAlignment="Center"/>
+            </Frame>
+        </DataTemplate>
+
+        <!-- кнопка -->
+        <DataTemplate x:Key="ButtonTemplate">
+            <Button Text="{Binding Text}"
+              Command="{Binding Command}"
+              Margin="4,0"/>
+        </DataTemplate>
+
+        <!-- лейбл -->
+        <DataTemplate x:Key="LabelTemplate">
+            <Label Text="{Binding Text}"
+             FontAttributes="Bold"
+             VerticalTextAlignment="Center"
+             Margin="8,0"/>
+        </DataTemplate>
+
+        <!-- селектор -->
+        <viewModels:RibbonItemTemplateSelector
+       x:Key="RibbonItemSelector"
+       ButtonTemplate="{StaticResource ButtonTemplate}"
+       LabelTemplate="{StaticResource LabelTemplate}" />
+    </ContentPage.Resources>
+    <!-- Размечаем страницу двумя строками: риббон и остальной контент -->
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- 1) Риббон -->
+        <VerticalStackLayout
+              Grid.Row="0"
+              BackgroundColor="#F5F5F5"
+              BindingContext="{Binding Source={StaticResource Locator}, Path=RibbonViewModel}"
+              Spacing="0" Padding="4">
+
+            <!-- 1) табы -->
+            <CollectionView
+            x:Name="TabsCollectionView"
+            SelectionMode="Single"
+            ItemsSource="{Binding RibbonTabs}"
+            SelectedItem="{Binding SelectedRibbonTab, Mode=TwoWay}"
+            ItemsLayout="HorizontalList"
+            ItemTemplate="{StaticResource TabHeaderTemplate}"
+            HeightRequest="48"/>
+
+            <!-- 2) кнопки+лейбл -->
+            <CollectionView
+            ItemsSource="{Binding SelectedRibbonTab.Items}"
+            ItemsLayout="HorizontalList"
+            ItemTemplate="{StaticResource RibbonItemSelector}"
+            HeightRequest="56"
+            Margin="0,4"/>
+        </VerticalStackLayout>
+        <!-- 2) Оригинальный контент страницы -->
+        <Grid Grid.Row="1" ColumnDefinitions="300,*">
+            <VerticalStackLayout Grid.Column="0" Padding="5" Spacing="10">
+                <controls:GroundPointsControl
+          GroundPoints="{Binding GroundPoints}"
+          AddPointCommand="{Binding AddGroundPointCommand}"
+          RemovePointCommand="{Binding RemoveGroundPointCommand}"
+          IncreaseDistanceCommand="{Binding IncreaseGroundDistanceCommand}"
+          DecreaseDistanceCommand="{Binding DecreaseGroundDistanceCommand}" />
+
+                <controls:PipePointsControl
+          PipePoints="{Binding PipePoints}"
+          AddPointCommand="{Binding AddPipePointCommand}"
+          RemovePointCommand="{Binding RemovePipePointCommand}"
+          IncreaseDistanceCommand="{Binding IncreasePipeDistanceCommand}"
+          DecreaseDistanceCommand="{Binding DecreasePipeDistanceCommand}" />
+            </VerticalStackLayout>
+
+            <controls:PipeProfileView
+        Grid.Column="1"
+        ViewModel="{Binding}" />
+        </Grid>
+
+    </Grid>
+</ContentPage>
