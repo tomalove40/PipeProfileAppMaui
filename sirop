@@ -10,7 +10,7 @@
   TabViewItem.cs
   TabViewStyle.xaml
   TabViewStyle.xaml.cs
-[PipeProfileAppMaui]
+[ProfileApp]
   [.git]
     [hooks]
       applypatch-msg.sample
@@ -297,22 +297,12 @@
   [Helpers]
     DrawingHelpers.cs
     PageConfig.cs
+    PdfExporter.cs
     TextDrawingHelper.cs
   [Models]
     GroundPoint.cs
     PipePoint.cs
     StampCell.cs
-  [MPowerKit.TabView]
-    Alignment.cs
-    InverseBooleanConverter.cs
-    ItemsPresenter.cs
-    MPowerKit.TabView.csproj
-    ScrollOrientationToStackOrientationConverter.cs
-    TabVIew.cs
-    TabViewHeaderItem.cs
-    TabViewItem.cs
-    TabViewStyle.xaml
-    TabViewStyle.xaml.cs
   [Platforms]
     [Android]
       [Resources]
@@ -374,6 +364,7 @@
   [Services]
     GroundCurveRenderer.cs
     IPipeRenderer.cs
+    PipeAxisRenderer.cs
     PipeCenterlineRenderer.cs
     PipeCurveRenderer.cs
     PipeProfileRenderer.cs
@@ -397,15 +388,19 @@
   App.xaml.cs
   AppShell.xaml
   AppShell.xaml.cs
+  icon.png
+  LICENSE
   MainPage.xaml
   MainPage.xaml.cs
   MauiProgram.cs
   PipeProfileAppMaui.csproj
   PipeProfileAppMaui.csproj.user
   PipeProfileAppMaui.sln
+  readme.md
   ViewModelLocator.cs
 icon.png
 LICENSE
+PipeProfileAppMaui.sln
 readme.md
 
 ==========================================
@@ -455,7 +450,7 @@ public class ItemsPresenter : ContentView
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net8.0</TargetFrameworks>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
 		<UseMaui>true</UseMaui>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
@@ -472,10 +467,6 @@ public class ItemsPresenter : ContentView
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageReadmeFile>readme.md</PackageReadmeFile>
 		<PackageIcon>icon.png</PackageIcon>
-
-		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
-		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -1751,7 +1742,7 @@ public partial class TabViewStyle
     }
 }
 
-Файл: PipeProfileAppMaui\App.xaml
+Файл: ProfileApp\App.xaml
 <?xml version = "1.0" encoding = "UTF-8" ?>
 <Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -1779,7 +1770,7 @@ public partial class TabViewStyle
 </Application>
 
 
-Файл: PipeProfileAppMaui\App.xaml.cs
+Файл: ProfileApp\App.xaml.cs
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Devices.Sensors;
 using PipeProfileAppMaui.ViewModels;
@@ -1798,7 +1789,7 @@ namespace PipeProfileAppMaui
     }
 }
 
-Файл: PipeProfileAppMaui\AppShell.xaml
+Файл: ProfileApp\AppShell.xaml
 <?xml version="1.0" encoding="utf-8"?>
 <Shell
   x:Class="PipeProfileAppMaui.AppShell"
@@ -1816,7 +1807,7 @@ namespace PipeProfileAppMaui
 
 </Shell>
 
-Файл: PipeProfileAppMaui\AppShell.xaml.cs
+Файл: ProfileApp\AppShell.xaml.cs
 namespace PipeProfileAppMaui
 {
     public partial class AppShell : Shell
@@ -1829,7 +1820,7 @@ namespace PipeProfileAppMaui
 }
 
 
-Файл: PipeProfileAppMaui\MainPage.xaml
+Файл: ProfileApp\MainPage.xaml
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
     x:Class="PipeProfileAppMaui.MainPage"
@@ -1863,7 +1854,7 @@ namespace PipeProfileAppMaui
         </Grid>
 </ContentPage>
 
-Файл: PipeProfileAppMaui\MainPage.xaml.cs
+Файл: ProfileApp\MainPage.xaml.cs
 using Microsoft.Maui.Controls;
 using SkiaSharp;
 using SkiaSharp.Views.Maui;
@@ -1882,7 +1873,7 @@ public partial class MainPage : ContentPage
     }
 }
 
-Файл: PipeProfileAppMaui\MauiProgram.cs
+Файл: ProfileApp\MauiProgram.cs
 using Microsoft.Extensions.DependencyInjection;
 using PipeProfileAppMaui.Services;
 using PipeProfileAppMaui.ViewModels;
@@ -1920,7 +1911,7 @@ namespace PipeProfileAppMaui
     }
 }
 
-Файл: PipeProfileAppMaui\PipeProfileAppMaui.csproj
+Файл: ProfileApp\PipeProfileAppMaui.csproj
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
@@ -1960,6 +1951,9 @@ namespace PipeProfileAppMaui
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 		<WindowsPackageType>None</WindowsPackageType>
+
+		<!--<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>-->
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android34.0|AnyCPU'">
@@ -2008,8 +2002,10 @@ namespace PipeProfileAppMaui
 		<PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.119.0" />
 		<PackageReference Include="UraniumUI" Version="2.12.1" />
 		<PackageReference Include="UraniumUI.Material" Version="2.12.1" />
+	</ItemGroup>
 
-		<ProjectReference Include="..\MPowerKit.TabView\MPowerKit.TabView.csproj" />
+	<ItemGroup>
+	  <ProjectReference Include="..\MPowerKit.TabView\MPowerKit.TabView.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -2035,11 +2031,16 @@ namespace PipeProfileAppMaui
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
+	<ItemGroup>
+		<MauiXaml Update="Resources\Styles\TabStyles.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+	</ItemGroup>
 
 </Project>
 
 
-Файл: PipeProfileAppMaui\ViewModelLocator.cs
+Файл: ProfileApp\ViewModelLocator.cs
 using Microsoft.Extensions.DependencyInjection;
 using PipeProfileAppMaui.Services;
 
@@ -2077,7 +2078,7 @@ namespace PipeProfileAppMaui.ViewModels
     }
 }
 
-Файл: PipeProfileAppMaui\Controls\EditorManager.cs
+Файл: ProfileApp\Controls\EditorManager.cs
 using System;
 using System.Linq;
 using Microsoft.Maui.Controls;
@@ -2253,7 +2254,7 @@ namespace PipeProfileAppMaui.Controls
     }
 }
 
-Файл: PipeProfileAppMaui\Controls\GroundPointsControl.xaml
+Файл: ProfileApp\Controls\GroundPointsControl.xaml
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -2310,7 +2311,7 @@ namespace PipeProfileAppMaui.Controls
     </VerticalStackLayout>
 </ContentView>
 
-Файл: PipeProfileAppMaui\Controls\GroundPointsControl.xaml.cs
+Файл: ProfileApp\Controls\GroundPointsControl.xaml.cs
 using System.Collections.ObjectModel;
 using System.Windows.Input;                 // ICommand
 using Microsoft.Maui.Controls;
@@ -2393,7 +2394,7 @@ namespace PipeProfileAppMaui.Controls
     }
 }
 
-Файл: PipeProfileAppMaui\Controls\PipePointsControl.xaml
+Файл: ProfileApp\Controls\PipePointsControl.xaml
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -2456,7 +2457,7 @@ namespace PipeProfileAppMaui.Controls
     </VerticalStackLayout>
 </ContentView>
 
-Файл: PipeProfileAppMaui\Controls\PipePointsControl.xaml.cs
+Файл: ProfileApp\Controls\PipePointsControl.xaml.cs
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Microsoft.Maui.Controls;
@@ -2539,7 +2540,8 @@ namespace PipeProfileAppMaui.Controls
     }
 }
 
-Файл: PipeProfileAppMaui\Controls\PipeProfileView.Drawing.cs
+Файл: ProfileApp\Controls\PipeProfileView.Drawing.cs
+using CommunityToolkit.Maui.Storage;
 using PipeProfileAppMaui.Helpers;
 using SkiaSharp;
 using SkiaSharp.Views.Maui;
@@ -2557,8 +2559,10 @@ namespace PipeProfileAppMaui.Controls
 
         void OnPaintSurface(object sender, SKPaintSurfaceEventArgs e)
         {
-         var canvas = e.Surface.Canvas;
-            var info = e.Info;
+            DrawCanvas(e.Surface.Canvas, e.Info);
+        }
+        private void DrawCanvas(SKCanvas canvas, SKImageInfo info)
+        {
             canvas.Clear(SKColors.White);
 
             // 0) Применяем текущий Pan/Zoom ко всему рисунку
@@ -2607,9 +2611,12 @@ namespace PipeProfileAppMaui.Controls
 
             // 1) Letterbox-A4
             _sheetRect = DrawingHelpers.CalculateLetterbox(
-                e.Info.Size,
+                info.Size,
                 PageConfig.PageMargin,
                 PageConfig.A4WidthMm / PageConfig.A4HeightMm);
+
+            // 1 мм листа = sheetRect.Width / A4WidthMm (в пикселях)
+            PageConfig.PxPerMm = sheetRect.Width / PageConfig.A4WidthMm;
 
             // 2) ГОСТ-рамка
             float pxPerMm = _sheetRect.Width / PageConfig.A4WidthMm;
@@ -2638,7 +2645,7 @@ namespace PipeProfileAppMaui.Controls
                 _profileArea,
                 ViewModel.GroundVm.GroundPoints,
                 ViewModel.PipeVm.PipePoints,
-                ViewModel.GroundVm.InterpolateGroundElevation,
+                ViewModel.GroundVm.InterpolateGroundElevation_m,
                 ViewModel.ShowMarkers);
 
             var gostRect = new SKRect(
@@ -2687,11 +2694,74 @@ namespace PipeProfileAppMaui.Controls
 
             canvas.Restore();       
         }
+
+        /// <summary>
+        /// Сохранить в PDF только ту часть, что занимает «лист» (ГОСТ-рамка + профиль + штамп).
+        /// </summary>
+        public async Task SavePdfAsync()
+        {
+            // 1) Размер A4 landscape в пунктах (1pt = 1/72in)
+            const float InchToPt = 72f;
+            int pdfW = (int)(11.69f * InchToPt);
+            int pdfH = (int)(8.27f * InchToPt);
+
+            // 2) Рассчитать sheetRect и pxPerMm как в OnPaintSurface
+            ComputeSheetArea(new SKImageInfo(pdfW, pdfH), out SKRect sheetRect, out float pxPerMm);
+
+            // 3) Запомнить старый Transform и сбросить его
+            var tf = ViewModel.Transform;
+            float oldZoom = tf.Zoom, oldPanX = tf.PanX, oldPanY = tf.PanY;
+            tf.Zoom = 1; tf.PanX = tf.PanY = 0;
+
+            byte[] pdfBytes;
+            using (var ms = new MemoryStream())
+            using (var doc = SKDocument.CreatePdf(ms))
+            {
+                var canvas = doc.BeginPage(pdfW, pdfH);
+                var info = new SKImageInfo(pdfW, pdfH);
+
+                // 4) Сместить так, чтобы sheetRect.Left/Top стали началом (0,0)
+                canvas.Translate(-sheetRect.Left, -sheetRect.Top);
+
+                // 5) Нарисовать лист точно так же, как OnPaintSurface это делает ВНУТРИ sheetRect
+                DrawCanvas(canvas, info);
+
+                doc.EndPage();
+                doc.Close();
+                pdfBytes = ms.ToArray();
+            }
+
+            // 6) Восстановить Transform
+            tf.Zoom = oldZoom; tf.PanX = oldPanX; tf.PanY = oldPanY;
+
+            // 7) Сохранить PDF через диалог
+            using var pdfStream = new MemoryStream(pdfBytes);
+            await FileSaver.Default.SaveAsync("profile.pdf", pdfStream);
+
+            await Application.Current
+                   .MainPage
+                   .DisplayAlert("Готово", "PDF сохранён", "OK");
+        }
+
+        /// <summary>
+        /// Вспомогательный метод: рассчитывает sheetRect и pxPerMm
+        /// точно так же, как в OnPaintSurface.
+        /// </summary>
+        private void ComputeSheetArea(SKImageInfo info, out SKRect sheetRect, out float pxPerMm)
+        {
+            // letterbox A4
+            sheetRect = DrawingHelpers.CalculateLetterbox(
+                info.Size,
+                PageConfig.PageMargin,
+                PageConfig.A4WidthMm / PageConfig.A4HeightMm);
+
+            pxPerMm = sheetRect.Width / PageConfig.A4WidthMm;
+        }
     }
 }
 
 
-Файл: PipeProfileAppMaui\Controls\PipeProfileView.Editor.cs
+Файл: ProfileApp\Controls\PipeProfileView.Editor.cs
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -2708,7 +2778,7 @@ namespace PipeProfileAppMaui.Controls
 }
 
 
-Файл: PipeProfileAppMaui\Controls\PipeProfileView.Events.cs
+Файл: ProfileApp\Controls\PipeProfileView.Events.cs
 #if WINDOWS
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Input;
@@ -2921,11 +2991,30 @@ namespace PipeProfileAppMaui.Controls
 
         void OnViewSizeChanged(object sender, EventArgs e)
         {
-            //ViewModel?.UpdatePipeOffsetRatio();
-            // новый размер view: Width, Height
-            CanvasView.InvalidateSurface();   // перерисовать
-        }
+            // получаем новый DIP-размер View
+            double newW = this.Width, newH = this.Height;
+            if (_prevViewWidth > 0 && _prevViewHeight > 0)
+            {
+                // вычисляем коэффициент по горизонтали (или по вертикали, или берём min/max по вашему вкусу)
+                float factor = (float)(newW / _prevViewWidth);
 
+                // середина View в DIP
+                var dipCenter = new SKPoint((float)(this.Width / 2.0), (float)(this.Height / 2.0));
+                // конвертируем её в пиксели канвы
+                var pixCenter = new SKPoint(dipCenter.X * _editorManager.DipToPixX,
+                                            dipCenter.Y * _editorManager.DipToPixY);
+
+                // применяем “зум” точно как при колесе мыши
+                ViewModel.Transform.ZoomAt(factor, pixCenter);
+
+                // перерисуем
+                CanvasView.InvalidateSurface();
+            }
+
+            // обновляем prev-размер
+            _prevViewWidth = newW;
+            _prevViewHeight = newH;
+        }
         void OnCanvasSizeChanged(object sender, EventArgs e)
         {
             // новый размер холста (DIP)
@@ -2936,7 +3025,8 @@ namespace PipeProfileAppMaui.Controls
 }
 
 
-Файл: PipeProfileAppMaui\Controls\PipeProfileView.Init.cs
+Файл: ProfileApp\Controls\PipeProfileView.Init.cs
+using CommunityToolkit.Mvvm.Messaging;
 using PipeProfileAppMaui.Models;
 using PipeProfileAppMaui.Services;
 using SkiaSharp;
@@ -2954,6 +3044,11 @@ public partial class PipeProfileView : ContentView
 {
     //readonly ProfileRenderer _renderer;
     readonly EditorManager   _editorMgr;
+
+        // предыдущие размеры View (DIP)
+        private double _prevViewWidth = -1, _prevViewHeight = -1;
+        // предыдущие размеры Canvas (пиксели)
+        private SKSize _prevCanvasSize = SKSize.Empty;
 
         public PipeProfileView()
         {
@@ -2993,6 +3088,12 @@ public partial class PipeProfileView : ContentView
 
             // или на сам CanvasView, если нужно
             CanvasView.SizeChanged += OnCanvasSizeChanged;
+
+            // подписка на запрос сохранения
+            WeakReferenceMessenger.Default.Register<ViewModels.MainViewModel.SavePdfMessage>(this, (r, m) =>
+            {
+                _ = SavePdfAsync();
+            });
         }
 
         private void OnCanvasTouch(object sender, SKTouchEventArgs e)
@@ -3029,7 +3130,7 @@ public partial class PipeProfileView : ContentView
 }
 
 
-Файл: PipeProfileAppMaui\Controls\PipeProfileView.xaml
+Файл: ProfileApp\Controls\PipeProfileView.xaml
 <ContentView
   xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
   xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -3047,7 +3148,7 @@ public partial class PipeProfileView : ContentView
     </AbsoluteLayout>
 </ContentView>
 
-Файл: PipeProfileAppMaui\Controls\PipeProfileView.xaml.cs
+Файл: ProfileApp\Controls\PipeProfileView.xaml.cs
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -3237,7 +3338,7 @@ namespace PipeProfileAppMaui.Controls
     }
 }
 
-Файл: PipeProfileAppMaui\Controls\RibbonView.xaml
+Файл: ProfileApp\Controls\RibbonView.xaml
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -3308,7 +3409,7 @@ namespace PipeProfileAppMaui.Controls
     </tab:TabView>
 </ContentView>
 
-Файл: PipeProfileAppMaui\Controls\RibbonView.xaml.cs
+Файл: ProfileApp\Controls\RibbonView.xaml.cs
 using Microsoft.Maui.Controls;
 using PipeProfileAppMaui.ViewModels;
 
@@ -3344,7 +3445,7 @@ namespace PipeProfileAppMaui.Controls
     }
 }
 
-Файл: PipeProfileAppMaui\Controls\SideTabView.xaml
+Файл: ProfileApp\Controls\SideTabView.xaml
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView
   xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -3402,7 +3503,7 @@ namespace PipeProfileAppMaui.Controls
     </mpk:TabView>
 </ContentView>
 
-Файл: PipeProfileAppMaui\Controls\SideTabView.xaml.cs
+Файл: ProfileApp\Controls\SideTabView.xaml.cs
 // SideTabView.xaml.cs
 using Microsoft.Maui.Controls;
 
@@ -3424,7 +3525,7 @@ namespace PipeProfileAppMaui.Controls
     }
 }
 
-Файл: PipeProfileAppMaui\Controls\Stamp.cs
+Файл: ProfileApp\Controls\Stamp.cs
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -3645,7 +3746,7 @@ namespace PipeProfileAppMaui.Controls
     public record CellSpan(int Row, int Col, int RowSpan, int ColSpan);
 }
 
-Файл: PipeProfileAppMaui\Converters\BoolToStateConverter.cs
+Файл: ProfileApp\Converters\BoolToStateConverter.cs
 // File: Converters/BoolToStateConverter.cs
 using System;
 using System.Globalization;
@@ -3668,7 +3769,7 @@ namespace PipeProfileAppMaui.Converters
     }
 }
 
-Файл: PipeProfileAppMaui\Converters\HeaderEqualsConverter.cs
+Файл: ProfileApp\Converters\HeaderEqualsConverter.cs
 using System;
 using System.Globalization;
 using Microsoft.Maui.Controls;
@@ -3692,7 +3793,7 @@ namespace PipeProfileAppMaui.Converters
 }
 
 
-Файл: PipeProfileAppMaui\Converters\SelectedTabBackgroundConverter.cs
+Файл: ProfileApp\Converters\SelectedTabBackgroundConverter.cs
 using System;
 using System.Globalization;
 using Microsoft.Maui;
@@ -3721,7 +3822,7 @@ namespace PipeProfileAppMaui.Converters
     }
 }
 
-Файл: PipeProfileAppMaui\Helpers\DrawingHelpers.cs
+Файл: ProfileApp\Helpers\DrawingHelpers.cs
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -3800,7 +3901,7 @@ namespace PipeProfileAppMaui.Helpers
 }
 
 
-Файл: PipeProfileAppMaui\Helpers\PageConfig.cs
+Файл: ProfileApp\Helpers\PageConfig.cs
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -3822,11 +3923,74 @@ namespace PipeProfileAppMaui.Helpers
 
         public const float StampHeightMm = 55f;
         public const float StampWidthMm = 180f;
+
+        /// <summary>
+        /// Пикселей на миллиметр текущего листа (A4).  
+        /// Устанавливается при OnPaintSurface().
+        /// </summary>
+        public static float? PxPerMm { get; set; }
     }
 }
 
 
-Файл: PipeProfileAppMaui\Helpers\TextDrawingHelper.cs
+Файл: ProfileApp\Helpers\PdfExporter.cs
+using CommunityToolkit.Maui.Storage;
+using SkiaSharp;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PipeProfileAppMaui.Helpers
+{
+    //public static class PdfExporter
+    //{
+    //    /// <summary>
+    //    /// Рендерит ваш лист в PDF и предлагает пользователю выбрать, куда его сохранить.
+    //    /// </summary>
+    //    /// <param name="renderPage">
+    //    /// Асинхронный метод, который рисует страницу на SKCanvas заданного размера.
+    //    /// </param>
+    //    public static async Task SaveSheetAsPdfAsync(
+    //      Func<SKCanvas, SKImageInfo, Task> renderPage,
+    //      CancellationToken cancellationToken = default)
+    //    {
+    //        // 1) Генерируем PDF в памяти
+    //        byte[] pdfBytes;
+    //        {
+    //            // A4 – 210×297 мм → 8.27×11.69 дюйма → 72 pt/inch
+    //            const float inchPt = 72f;
+    //            int width = (int)(8.27f * inchPt);
+    //            int height = (int)(11.69f * inchPt);
+
+    //            using var mem = new MemoryStream();
+    //            using var doc = SKDocument.CreatePdf(mem);
+    //            var canvas = doc.BeginPage(width, height);
+    //            var info = new SKImageInfo(width, height);
+
+    //            // вызываем ваш рендер
+    //            await renderPage(canvas, info);
+
+    //            doc.EndPage();
+    //            doc.Close();
+
+    //            pdfBytes = mem.ToArray();
+    //        }
+
+    //        // 2) Спрашиваем у ОС, куда сохранить
+    //        //    FileSaver на Android и iOS покажет свой диалог, на Windows — нативный SaveFileDialog
+    //        await FileSaver.Default.SaveAsync(
+    //          fileName: "sheet.pdf",  // предлагаемый файл
+    //          data: pdfBytes,
+    //          cancellationToken: cancellationToken
+    //        );
+    //    }
+    //}
+}
+
+
+Файл: ProfileApp\Helpers\TextDrawingHelper.cs
 // File: Helpers/TextDrawingHelper.cs
 using SkiaSharp;
 
@@ -3938,7 +4102,7 @@ namespace PipeProfileAppMaui.Helpers
     }
 }
 
-Файл: PipeProfileAppMaui\Models\GroundPoint.cs
+Файл: ProfileApp\Models\GroundPoint.cs
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -3949,7 +4113,7 @@ namespace PipeProfileAppMaui.Models
         // Дистанция в метрах
         private double _distance_m;
         // Возвышение в сантиметрах
-        private double _elevation_cm;
+        private double _elevation_cm, _elevation_M;
         private bool _isHighlighted;
         private int _index;
         public int Index
@@ -3970,12 +4134,19 @@ namespace PipeProfileAppMaui.Models
             get => _distance_m;
             set { if (_distance_m != value) { _distance_m = value; OnPropertyChanged(); } }
         }
-
+        // Возвышение в сантиметрах
         public double Elevation_cm
         {
             get => _elevation_cm;
-            set { if (_elevation_cm != value) { _elevation_cm = value; OnPropertyChanged(); } }
+            set { if (_elevation_cm != value) { _elevation_cm = value; _elevation_M = value / 100; OnPropertyChanged(); } }
         }
+        // Возвышение в метрах
+        public double Elevation_M
+        {
+            get => _elevation_M;
+            set { if (_elevation_M != value) { _elevation_M = value; _elevation_cm = value * 100; OnPropertyChanged(); } }
+        }
+
 
         public bool IsHighlighted
         {
@@ -4011,7 +4182,7 @@ namespace PipeProfileAppMaui.Models
     }
 }
 
-Файл: PipeProfileAppMaui\Models\PipePoint.cs
+Файл: ProfileApp\Models\PipePoint.cs
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -4022,7 +4193,7 @@ namespace PipeProfileAppMaui.Models
         // Дистанция в метрах
         private double _distance_m;
         // Глубина в сантиметрах
-        private double _depth_cm;
+        private double _depth_cm, _depth_M;
         private bool _isHighlighted;
 
         private int _index;
@@ -4038,16 +4209,23 @@ namespace PipeProfileAppMaui.Models
                 }
             }
         }
+        // Дистанция в метрах
         public double Distance_m
         {
             get => _distance_m;
             set { if (_distance_m != value) { _distance_m = value; OnPropertyChanged(); } }
         }
-
+        // Глубина в сантиметрах
         public double Depth_cm
         {
             get => _depth_cm;
-            set { if (_depth_cm != value) { _depth_cm = value; OnPropertyChanged(); } }
+            set { if (_depth_cm != value) { _depth_cm = value; _depth_M = value / 100; OnPropertyChanged(); } }
+        }
+        // Глубина в метрах
+        public double Depth_M
+        {
+            get => _depth_M;
+            set { if (_depth_M != value) { _depth_M = value; _depth_cm = value * 100; OnPropertyChanged(); } }
         }
 
         public bool IsHighlighted
@@ -4086,7 +4264,7 @@ namespace PipeProfileAppMaui.Models
     }
 }
 
-Файл: PipeProfileAppMaui\Models\StampCell.cs
+Файл: ProfileApp\Models\StampCell.cs
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -4116,1344 +4294,7 @@ namespace PipeProfileAppMaui.Models
 }
 
 
-Файл: PipeProfileAppMaui\MPowerKit.TabView\Alignment.cs
-namespace MPowerKit.TabView;
-
-public enum Alignment
-{
-    Top,
-    Bottom,
-    Left,
-    Right
-}
-
-Файл: PipeProfileAppMaui\MPowerKit.TabView\InverseBooleanConverter.cs
-using System.Globalization;
-
-namespace MPowerKit.TabView;
-
-public class InverseBooleanConverter : IValueConverter
-{
-    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-    {
-        if (value is bool boolean)
-        {
-            return !boolean;
-        }
-
-        return value;
-    }
-
-    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-Файл: PipeProfileAppMaui\MPowerKit.TabView\ItemsPresenter.cs
-namespace MPowerKit.TabView;
-
-public class ItemsPresenter : ContentView
-{
-}
-
-Файл: PipeProfileAppMaui\MPowerKit.TabView\MPowerKit.TabView.csproj
-<Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
-		<UseMaui>true</UseMaui>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<Title>MPowerKit.TabView</Title>
-		<Version>1.3.0</Version>
-		<Authors>MPowerKit,Alex Dobrynin</Authors>
-		<Description>Fully customizable .NET MAUI TabView</Description>
-		<Copyright>MPowerKit</Copyright>
-		<PackageProjectUrl>https://github.com/MPowerKit/TabView</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/MPowerKit/TabView</RepositoryUrl>
-		<PackageTags>tab view;tabview;maui;tabbedview;tab;tabbed;tabs</PackageTags>
-		<PackageLicenseFile>LICENSE</PackageLicenseFile>
-		<PackageReadmeFile>readme.md</PackageReadmeFile>
-		<PackageIcon>icon.png</PackageIcon>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Include="..\LICENSE">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-		<None Include="..\readme.md">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-		<None Include="..\icon.png">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-	</ItemGroup>
-
-</Project>
-
-
-Файл: PipeProfileAppMaui\MPowerKit.TabView\ScrollOrientationToStackOrientationConverter.cs
-using System.Globalization;
-
-namespace MPowerKit.TabView;
-
-public class ScrollOrientationToStackOrientationConverter : IValueConverter
-{
-    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-    {
-        if (value is ScrollOrientation scrollOrientation)
-        {
-            return scrollOrientation switch
-            {
-                ScrollOrientation.Horizontal => StackOrientation.Horizontal,
-                ScrollOrientation.Vertical => StackOrientation.Vertical,
-                _ => throw new ArgumentOutOfRangeException(nameof(scrollOrientation), scrollOrientation, null)
-            };
-        }
-
-        return StackOrientation.Horizontal;
-    }
-
-    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-Файл: PipeProfileAppMaui\MPowerKit.TabView\TabVIew.cs
-using System.Collections;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows.Input;
-
-namespace MPowerKit.TabView;
-
-[ContentProperty("Tabs")]
-public class TabView : ContentView
-{
-    protected Grid? ContentContainer;
-    protected ScrollView? HeadersScroll;
-    protected TabViewItem? PrevSelectedTabItem;
-    protected Layout HeadersContainer;
-
-    protected bool UseItemsSource => ItemsSource is not null;
-
-    public ObservableCollection<TabViewItem> Tabs { get; } = [];
-
-    protected Layout StackItemsLayout
-    {
-        get
-        {
-            var stack = new StackLayout()
-            {
-                VerticalOptions = LayoutOptions.Fill,
-                HorizontalOptions = LayoutOptions.Fill,
-                Spacing = 0,
-                Orientation = StackOrientation.Horizontal
-            };
-
-            stack.SetBinding(StackLayout.OrientationProperty, new Binding(ScrollView.OrientationProperty.PropertyName,
-                source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestor, typeof(ScrollView)),
-                converter: new ScrollOrientationToStackOrientationConverter()));
-
-            return stack;
-        }
-    }
-
-    public TabView()
-    {
-        Tabs.CollectionChanged += Tabs_CollectionChanged;
-    }
-
-    protected override void OnApplyTemplate()
-    {
-        base.OnApplyTemplate();
-
-        ContentContainer = GetTemplateChild("PART_ContentContainer") as Grid;
-        HeadersScroll = GetTemplateChild("PART_HeadersScrollView") as ScrollView;
-
-        InitHeaderBarLayout();
-    }
-
-    protected virtual void InitHeaderBarLayout()
-    {
-        if (HeadersScroll == null || HeadersScroll.Content is not ItemsPresenter presenter) return;
-
-        var newLayout = HeaderItemsLayout ?? StackItemsLayout;
-
-        if (HeadersContainer != null)
-        {
-            foreach (var item in HeadersContainer.Children)
-            {
-                newLayout.Children.Add(item);
-            }
-
-            HeadersContainer.Children.Clear();
-        }
-
-        HeadersContainer = newLayout;
-
-        presenter.Content = HeadersContainer;
-    }
-
-    protected override void OnBindingContextChanged()
-    {
-        base.OnBindingContextChanged();
-
-        if (BindingContext is not null && !UseItemsSource)
-        {
-            foreach (var tab in Tabs)
-            {
-                if (tab.BindingContext != BindingContext)
-                    tab.BindingContext = BindingContext;
-            }
-        }
-    }
-
-    protected override void OnPropertyChanging([CallerMemberName] string? propertyName = null)
-    {
-        base.OnPropertyChanging(propertyName);
-
-        if (propertyName == ItemsSourceProperty.PropertyName && ItemsSource is not null)
-        {
-            if (ItemsSource is INotifyCollectionChanged itemsSource)
-                itemsSource.CollectionChanged -= ItemsSource_CollectionChanged;
-
-            Tabs.Clear();
-        }
-        else if (propertyName == SelectedTabIndexProperty.PropertyName)
-        {
-            PrevSelectedTabItem = Tabs.ElementAtOrDefault(SelectedTabIndex);
-        }
-    }
-
-    protected override void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-    {
-        base.OnPropertyChanged(propertyName);
-
-        if (propertyName == ItemsSourceProperty.PropertyName && ItemsSource is not null)
-        {
-            if (ItemsSource is INotifyCollectionChanged itemsSource)
-                itemsSource.CollectionChanged += ItemsSource_CollectionChanged;
-
-            InitItems(ItemsSource);
-        }
-        else if (propertyName == SelectedTabIndexProperty.PropertyName)
-        {
-            if (PrevSelectedTabItem is not null) PrevSelectedTabItem.IsSelected = false;
-
-            var newTab = Tabs.ElementAtOrDefault(SelectedTabIndex);
-            if (newTab is not null)
-            {
-                if (newTab.IsEnabled)
-                {
-                    newTab.IsSelected = true;
-                }
-                else
-                {
-                    SelectClosestEnabledTab(newTab);
-                    return;
-                }
-            }
-
-            if (SelectedTabChangedCommand?.CanExecute(SelectedTabChangedCommandParameter) is true)
-                SelectedTabChangedCommand.Execute(SelectedTabChangedCommandParameter);
-        }
-        else if (propertyName == ContentTemplateProperty.PropertyName && UseItemsSource)
-        {
-            foreach (var tab in Tabs)
-            {
-                var index = Tabs.IndexOf(tab);
-                InitTabContentTemplate(tab.BindingContext, tab);
-            }
-        }
-        else if (propertyName == HeaderItemsLayoutProperty.PropertyName)
-        {
-            InitHeaderBarLayout();
-        }
-    }
-
-    protected virtual void InitItems(IEnumerable source, int index = 0, bool useIndex = false)
-    {
-        if (source is null) return;
-
-        foreach (var item in source)
-        {
-            var tabItem = new TabViewItem();
-            InitTabContentTemplate(item, tabItem);
-
-            tabItem.BindingContext = item;
-            tabItem.Header = item;
-
-            if (useIndex) Tabs.Insert(index, tabItem);
-            else Tabs.Add(tabItem);
-        }
-    }
-
-    protected virtual void InitTabContentTemplate(object item, TabViewItem tabItem)
-    {
-        if (ContentTemplate is not null)
-        {
-            var template = ContentTemplate;
-            if (ContentTemplate is DataTemplateSelector selector) template = selector.SelectTemplate(item, this);
-
-            var tabContent = template.CreateContent() as View;
-            tabContent!.BindingContext ??= item;
-
-            tabItem.Content = tabContent;
-            return;
-        }
-
-        tabItem.Content = new Label
-        {
-            Text = item.ToString()
-        };
-    }
-
-    protected virtual void ItemsSource_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-    {
-        switch (e.Action)
-        {
-            case NotifyCollectionChangedAction.Add:
-                ItemsAdd(e);
-                break;
-            case NotifyCollectionChangedAction.Move:
-                ItemsMove(e);
-                break;
-            case NotifyCollectionChangedAction.Remove:
-                ItemsRemove(e);
-                break;
-            case NotifyCollectionChangedAction.Replace:
-                ItemsReplace(e);
-                break;
-            case NotifyCollectionChangedAction.Reset:
-                ItemsReset(e);
-                break;
-        }
-    }
-
-    protected virtual void ItemsAdd(NotifyCollectionChangedEventArgs e)
-    {
-        InitItems(e.NewItems!, e.NewStartingIndex, true);
-    }
-
-    protected virtual void ItemsMove(NotifyCollectionChangedEventArgs e)
-    {
-        Tabs.Move(e.OldStartingIndex, e.NewStartingIndex);
-    }
-
-    protected virtual void ItemsRemove(NotifyCollectionChangedEventArgs e)
-    {
-        if (e.OldItems is null) return;
-
-        if (e.OldStartingIndex + e.OldItems.Count < SelectedTabIndex)
-        {
-            SelectedTabIndex -= e.OldItems.Count;
-        }
-        else if (SelectedTabIndex >= e.OldStartingIndex
-            && SelectedTabIndex <= e.OldStartingIndex + e.OldItems.Count)
-        {
-            var newIndex = e.OldStartingIndex + e.OldItems.Count + 1;
-            if (newIndex > Tabs.Count) newIndex = -1;
-            SelectedTabIndex = newIndex;
-        }
-
-        foreach (var item in e.OldItems)
-        {
-            Tabs.RemoveAt(e.OldStartingIndex);
-        }
-    }
-
-    protected virtual void ItemsReplace(NotifyCollectionChangedEventArgs e)
-    {
-        ItemsRemove(e);
-        ItemsAdd(e);
-    }
-
-    protected virtual void ItemsReset(NotifyCollectionChangedEventArgs e)
-    {
-        foreach (var item in Tabs)
-        {
-            item.PropertyChanged -= TabItem_PropertyChanged;
-        }
-
-        Tabs.Clear();
-
-        InitItems(ItemsSource);
-    }
-
-    protected virtual void Tabs_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-    {
-        switch (e.Action)
-        {
-            case NotifyCollectionChangedAction.Add:
-                {
-                    foreach (TabViewItem item in e.NewItems!)
-                    {
-                        item!.PropertyChanged += TabItem_PropertyChanged;
-
-                        HeadersContainer?.Children.Insert(e.NewStartingIndex, item.TabViewHeaderItem);
-                        ContentContainer?.Children.Insert(e.NewStartingIndex, item);
-                    }
-
-                    TabsInitialSelection(e);
-                }
-                break;
-            case NotifyCollectionChangedAction.Move:
-                {
-                    if (HeadersContainer is not null)
-                    {
-                        var header = HeadersContainer.Children.ElementAt(e.OldStartingIndex);
-                        HeadersContainer.Children.Remove(header);
-                        HeadersContainer.Children.Insert(e.NewStartingIndex, header);
-                    }
-
-                    if (ContentContainer is not null)
-                    {
-                        var content = ContentContainer.Children.ElementAt(e.OldStartingIndex);
-                        ContentContainer.Children.Remove(content);
-                        ContentContainer.Children.Insert(e.NewStartingIndex, content);
-                    }
-                }
-                break;
-            case NotifyCollectionChangedAction.Remove:
-                {
-                    foreach (TabViewItem item in e.OldItems!)
-                    {
-                        item!.PropertyChanged -= TabItem_PropertyChanged;
-
-                        HeadersContainer?.Children.RemoveAt(e.OldStartingIndex);
-                        ContentContainer?.Children.RemoveAt(e.OldStartingIndex);
-                    }
-                }
-                break;
-            case NotifyCollectionChangedAction.Replace:
-                break;
-            case NotifyCollectionChangedAction.Reset:
-                {
-                    HeadersContainer?.Children.Clear();
-                    ContentContainer?.Children.Clear();
-                    SelectedTabIndex = -1;
-                }
-                break;
-        }
-    }
-
-    protected virtual void TabsInitialSelection(NotifyCollectionChangedEventArgs e)
-    {
-        if (SelectedTabIndex == -1)
-        {
-            if (Tabs.Any(t => t.IsSelected))
-            {
-                SelectedTabIndex = Tabs.IndexOf(Tabs.First(t => t.IsSelected));
-            }
-            else
-            {
-                var tab = Tabs.First();
-                if (!tab.IsEnabled) SelectClosestEnabledTab(tab);
-                else SelectedTabIndex = 0;
-            }
-        }
-        else
-        {
-            if (!Tabs.Any(t => t.IsSelected))
-            {
-                var tab = Tabs.ElementAtOrDefault(SelectedTabIndex);
-                if (tab is null)
-                {
-                    if (Tabs.Count == 0) SelectedTabIndex = -1;
-                    else SelectedTabIndex = 0;
-                    return;
-                }
-                if (!tab.IsEnabled) SelectClosestEnabledTab(tab);
-                else tab.IsSelected = true;
-            }
-            else if (e.NewStartingIndex <= SelectedTabIndex)
-                SelectedTabIndex += (e.NewItems?.Count ?? 0) - (e.OldItems?.Count ?? 0);
-        }
-    }
-
-    protected virtual void TabItem_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        var tab = (sender as TabViewItem)!;
-
-        if (e.PropertyName == TabViewItem.IsSelectedProperty.PropertyName && tab.IsSelected)
-        {
-            if (!tab.IsEnabled)
-            {
-                SelectClosestEnabledTab(tab);
-                return;
-            }
-
-            SelectedTabIndex = Tabs.IndexOf(tab);
-
-            if (HeadersScroll is null || !ScrollToSelectedTab) return;
-
-            if (HeaderBarAlignment is Alignment.Top or Alignment.Bottom
-                && HeadersContainer.Width > HeadersScroll.Width)
-            {
-                var max = HeadersContainer.Width - HeadersScroll.Width;
-                var scrollTo = tab.TabViewHeaderItem.X - (HeadersScroll.Width - tab.TabViewHeaderItem.Width) / 2.0;
-                scrollTo = Math.Max(0d, Math.Min(max, scrollTo));
-
-                HeadersScroll.ScrollToAsync(scrollTo, 0d, true);
-            }
-            else if (HeaderBarAlignment is Alignment.Left or Alignment.Right
-                && HeadersContainer.Height > HeadersScroll.Height)
-            {
-                var max = HeadersContainer.Height - HeadersScroll.Height;
-                var scrollTo = tab.TabViewHeaderItem.Y - (HeadersScroll.Height - tab.TabViewHeaderItem.Height) / 2.0;
-                scrollTo = Math.Max(0d, Math.Min(max, scrollTo));
-
-                HeadersScroll.ScrollToAsync(0d, scrollTo, true);
-            }
-        }
-        else if (e.PropertyName == TabViewItem.IsEnabledProperty.PropertyName)
-        {
-            if (!tab.IsEnabled && tab.IsSelected) SelectClosestEnabledTab(tab);
-            else if (tab.IsEnabled && !Tabs.Any(t => t.IsSelected))
-            {
-                var index = Tabs.IndexOf(tab);
-                SelectedTabIndex = index;
-            }
-        }
-    }
-
-    protected virtual void SelectClosestEnabledTab(TabViewItem tab)
-    {
-        var tabs = Tabs.Where(t => t.IsEnabled || t == tab).ToList();
-
-        if (tabs.Count == 1)
-        {
-            SelectedTabIndex = -1;
-            return;
-        }
-
-        var index = tabs.IndexOf(tab);
-
-        tabs[index + (index == tabs.Count - 1 ? -1 : 1)].IsSelected = true;
-    }
-
-    #region HideTabsWhenDisabled
-    public bool HideTabsWhenDisabled
-    {
-        get { return (bool)GetValue(HideTabsWhenDisabledProperty); }
-        set { SetValue(HideTabsWhenDisabledProperty, value); }
-    }
-
-    public static readonly BindableProperty HideTabsWhenDisabledProperty =
-        BindableProperty.Create(
-            nameof(HideTabsWhenDisabled),
-            typeof(bool),
-            typeof(TabView),
-            true
-            );
-    #endregion
-
-    #region HeaderItemsLayout
-    public Layout HeaderItemsLayout
-    {
-        get { return (Layout)GetValue(HeaderItemsLayoutProperty); }
-        set { SetValue(HeaderItemsLayoutProperty, value); }
-    }
-
-    public static readonly BindableProperty HeaderItemsLayoutProperty =
-        BindableProperty.Create(
-            nameof(HeaderItemsLayout),
-            typeof(Layout),
-            typeof(TabView)
-            );
-    #endregion
-
-    #region ScrollToSelectedTab
-    public bool ScrollToSelectedTab
-    {
-        get { return (bool)GetValue(ScrollToSelectedTabProperty); }
-        set { SetValue(ScrollToSelectedTabProperty, value); }
-    }
-
-    public static readonly BindableProperty ScrollToSelectedTabProperty =
-        BindableProperty.Create(
-            nameof(ScrollToSelectedTab),
-            typeof(bool),
-            typeof(TabView),
-            true
-            );
-    #endregion
-
-    #region ContentBackgroundColor
-    public Color ContentBackgroundColor
-    {
-        get { return (Color)GetValue(ContentBackgroundColorProperty); }
-        set { SetValue(ContentBackgroundColorProperty, value); }
-    }
-
-    public static readonly BindableProperty ContentBackgroundColorProperty =
-        BindableProperty.Create(
-            nameof(ContentBackgroundColor),
-            typeof(Color),
-            typeof(TabView),
-            Colors.Transparent
-            );
-    #endregion
-
-    #region HeaderBarBackgroundColor
-    public Color HeaderBarBackgroundColor
-    {
-        get { return (Color)GetValue(HeaderBarBackgroundColorProperty); }
-        set { SetValue(HeaderBarBackgroundColorProperty, value); }
-    }
-
-    public static readonly BindableProperty HeaderBarBackgroundColorProperty =
-        BindableProperty.Create(
-            nameof(HeaderBarBackgroundColor),
-            typeof(Color),
-            typeof(TabView),
-            Colors.Transparent
-            );
-    #endregion
-
-    #region SelectedHeaderBackgroundColor
-    public Color SelectedHeaderBackgroundColor
-    {
-        get { return (Color)GetValue(SelectedHeaderBackgroundColorProperty); }
-        set { SetValue(SelectedHeaderBackgroundColorProperty, value); }
-    }
-
-    public static readonly BindableProperty SelectedHeaderBackgroundColorProperty =
-        BindableProperty.Create(
-            nameof(SelectedHeaderBackgroundColor),
-            typeof(Color),
-            typeof(TabView),
-            Colors.Blue
-            );
-    #endregion
-
-    #region HeaderBackgroundColor
-    public Color HeaderBackgroundColor
-    {
-        get { return (Color)GetValue(HeaderBackgroundColorProperty); }
-        set { SetValue(HeaderBackgroundColorProperty, value); }
-    }
-
-    public static readonly BindableProperty HeaderBackgroundColorProperty =
-        BindableProperty.Create(
-            nameof(HeaderBackgroundColor),
-            typeof(Color),
-            typeof(TabView),
-            Colors.Transparent
-            );
-    #endregion
-
-    #region HeaderHeightRequest
-    public double HeaderHeightRequest
-    {
-        get { return (double)GetValue(HeaderHeightRequestProperty); }
-        set { SetValue(HeaderHeightRequestProperty, value); }
-    }
-
-    public static readonly BindableProperty HeaderHeightRequestProperty =
-        BindableProperty.Create(
-            nameof(HeaderHeightRequest),
-            typeof(double),
-            typeof(TabView),
-            50.0
-            );
-    #endregion
-
-    #region HeaderFontFamily
-    public string HeaderFontFamily
-    {
-        get { return (string)GetValue(HeaderFontFamilyProperty); }
-        set { SetValue(HeaderFontFamilyProperty, value); }
-    }
-
-    public static readonly BindableProperty HeaderFontFamilyProperty =
-        BindableProperty.Create(
-            nameof(HeaderFontFamily),
-            typeof(string),
-            typeof(TabView)
-            );
-    #endregion
-
-    #region HeaderFontSize
-    public double HeaderFontSize
-    {
-        get { return (double)GetValue(HeaderFontSizeProperty); }
-        set { SetValue(HeaderFontSizeProperty, value); }
-    }
-
-    public static readonly BindableProperty HeaderFontSizeProperty =
-        BindableProperty.Create(
-            nameof(HeaderFontSize),
-            typeof(double),
-            typeof(TabView),
-            14.0
-            );
-    #endregion
-
-    #region HeaderFontAttributes
-    public FontAttributes HeaderFontAttributes
-    {
-        get { return (FontAttributes)GetValue(HeaderFontAttributesProperty); }
-        set { SetValue(HeaderFontAttributesProperty, value); }
-    }
-
-    public static readonly BindableProperty HeaderFontAttributesProperty =
-        BindableProperty.Create(
-            nameof(HeaderFontAttributes),
-            typeof(FontAttributes),
-            typeof(TabView),
-            FontAttributes.None
-            );
-    #endregion
-
-    #region HeaderTextColor
-    public Color HeaderTextColor
-    {
-        get { return (Color)GetValue(HeaderTextColorProperty); }
-        set { SetValue(HeaderTextColorProperty, value); }
-    }
-
-    public static readonly BindableProperty HeaderTextColorProperty =
-        BindableProperty.Create(
-            nameof(HeaderTextColor),
-            typeof(Color),
-            typeof(TabView),
-            Colors.Black
-            );
-    #endregion
-
-    #region SelectedTabIndex
-    public int SelectedTabIndex
-    {
-        get { return (int)GetValue(SelectedTabIndexProperty); }
-        set { SetValue(SelectedTabIndexProperty, value); }
-    }
-
-    public static readonly BindableProperty SelectedTabIndexProperty =
-        BindableProperty.Create(
-            nameof(SelectedTabIndex),
-            typeof(int),
-            typeof(TabView),
-            -1
-            );
-    #endregion
-
-    #region SelectedHeaderTemplate
-    public DataTemplate SelectedHeaderTemplate
-    {
-        get { return (DataTemplate)GetValue(SelectedHeaderTemplateProperty); }
-        set { SetValue(SelectedHeaderTemplateProperty, value); }
-    }
-
-    public static readonly BindableProperty SelectedHeaderTemplateProperty =
-        BindableProperty.Create(
-            nameof(SelectedHeaderTemplate),
-            typeof(DataTemplate),
-            typeof(TabView)
-            );
-    #endregion
-
-    #region HeaderTemplate
-    public DataTemplate HeaderTemplate
-    {
-        get { return (DataTemplate)GetValue(HeaderTemplateProperty); }
-        set { SetValue(HeaderTemplateProperty, value); }
-    }
-
-    public static readonly BindableProperty HeaderTemplateProperty =
-        BindableProperty.Create(
-            nameof(HeaderTemplate),
-            typeof(DataTemplate),
-            typeof(TabView)
-            );
-    #endregion
-
-    #region ContentTemplate
-    public DataTemplate ContentTemplate
-    {
-        get { return (DataTemplate)GetValue(ContentTemplateProperty); }
-        set { SetValue(ContentTemplateProperty, value); }
-    }
-
-    public static readonly BindableProperty ContentTemplateProperty =
-        BindableProperty.Create(
-            nameof(ContentTemplate),
-            typeof(DataTemplate),
-            typeof(TabView)
-            );
-    #endregion
-
-    #region ItemsSource
-    public IEnumerable ItemsSource
-    {
-        get { return (IEnumerable)GetValue(ItemsSourceProperty); }
-        set { SetValue(ItemsSourceProperty, value); }
-    }
-
-    public static readonly BindableProperty ItemsSourceProperty =
-        BindableProperty.Create(
-            nameof(ItemsSource),
-            typeof(IEnumerable),
-            typeof(TabView)
-            );
-    #endregion
-
-    #region SelectedTabChangedCommand
-    public ICommand SelectedTabChangedCommand
-    {
-        get { return (ICommand)GetValue(SelectedTabChangedCommandProperty); }
-        set { SetValue(SelectedTabChangedCommandProperty, value); }
-    }
-
-    public static readonly BindableProperty SelectedTabChangedCommandProperty =
-        BindableProperty.Create(
-            nameof(SelectedTabChangedCommand),
-            typeof(ICommand),
-            typeof(TabView)
-            );
-    #endregion
-
-    #region SelectedTabChangedCommandParameter
-    public object SelectedTabChangedCommandParameter
-    {
-        get { return (object)GetValue(SelectedTabChangedCommandParameterProperty); }
-        set { SetValue(SelectedTabChangedCommandParameterProperty, value); }
-    }
-
-    public static readonly BindableProperty SelectedTabChangedCommandParameterProperty =
-        BindableProperty.Create(
-            nameof(SelectedTabChangedCommandParameter),
-            typeof(object),
-            typeof(TabView)
-            );
-    #endregion
-
-    #region HeaderBarAlignment
-    public Alignment HeaderBarAlignment
-    {
-        get { return (Alignment)GetValue(HeaderBarAlignmentProperty); }
-        set { SetValue(HeaderBarAlignmentProperty, value); }
-    }
-
-    public static readonly BindableProperty HeaderBarAlignmentProperty =
-        BindableProperty.Create(
-            nameof(HeaderBarAlignment),
-            typeof(Alignment),
-            typeof(TabView),
-            Alignment.Top
-            );
-    #endregion
-
-    // Новое свойство: как выравнивать заголовок по вертикали
-    public LayoutOptions HeaderItemVerticalOptions
-    {
-        get => (LayoutOptions)GetValue(HeaderItemVerticalOptionsProperty);
-        set => SetValue(HeaderItemVerticalOptionsProperty, value);
-    }
-
-    public static readonly BindableProperty HeaderItemVerticalOptionsProperty =
-        BindableProperty.Create(
-            nameof(HeaderItemVerticalOptions),
-            typeof(LayoutOptions),
-            typeof(TabView),
-            LayoutOptions.Center // старая логика: по центру
-        );
-
-    // Новое свойство: как выравнивать заголовок по горизонтали (опционально)
-    public LayoutOptions HeaderItemHorizontalOptions
-    {
-        get => (LayoutOptions)GetValue(HeaderItemHorizontalOptionsProperty);
-        set => SetValue(HeaderItemHorizontalOptionsProperty, value);
-    }
-
-    public static readonly BindableProperty HeaderItemHorizontalOptionsProperty =
-        BindableProperty.Create(
-            nameof(HeaderItemHorizontalOptions),
-            typeof(LayoutOptions),
-            typeof(TabView),
-            LayoutOptions.Center
-        );
-}
-
-Файл: PipeProfileAppMaui\MPowerKit.TabView\TabViewHeaderItem.cs
-using System.Runtime.CompilerServices;
-
-namespace MPowerKit.TabView;
-
-public class TabViewHeaderItem : Grid
-{
-    protected readonly DataTemplate StringTemplate = new(() =>
-    {
-        var lbl = new Label()
-        {
-            VerticalOptions = LayoutOptions.Center,
-            HorizontalOptions = LayoutOptions.Center,
-            VerticalTextAlignment = TextAlignment.Center,
-            HorizontalTextAlignment = TextAlignment.Center
-        };
-        lbl.SetBinding(Label.TextProperty, ".");
-        lbl.SetBinding(Label.TextColorProperty, new Binding(TabView.HeaderTextColorProperty.PropertyName, source: RelativeBindingSource.TemplatedParent));
-        lbl.SetBinding(Label.FontFamilyProperty, new Binding(TabView.HeaderFontFamilyProperty.PropertyName, source: RelativeBindingSource.TemplatedParent));
-        lbl.SetBinding(Label.FontSizeProperty, new Binding(TabView.HeaderFontSizeProperty.PropertyName, source: RelativeBindingSource.TemplatedParent));
-        lbl.SetBinding(Label.FontAttributesProperty, new Binding(TabView.HeaderFontAttributesProperty.PropertyName, source: RelativeBindingSource.TemplatedParent));
-        return new ContentView()
-        {
-            Content = lbl,
-            VerticalOptions = LayoutOptions.Fill,
-            HorizontalOptions = LayoutOptions.Fill,
-            Padding = new Thickness(20, 10)
-        };
-    });
-
-    protected View? SelectedView;
-    protected View? UnselectedView;
-
-    public TabViewHeaderItem()
-    {
-        var tap = new TapGestureRecognizer();
-        tap.Tapped += Tap_Tapped;
-        GestureRecognizers.Add(tap);
-
-        SetBinding(SelectedContentTemplateProperty, new Binding(TabView.SelectedHeaderTemplateProperty.PropertyName, source: RelativeBindingSource.TemplatedParent));
-        SetBinding(ContentTemplateProperty, new Binding(TabView.HeaderTemplateProperty.PropertyName, source: RelativeBindingSource.TemplatedParent));
-        SetBinding(HideWhenDisabledProperty, new Binding(TabView.HideTabsWhenDisabledProperty.PropertyName, source: RelativeBindingSource.TemplatedParent));
-		SetBinding(BackgroundColorProperty, new Binding(TabView.HeaderBackgroundColorProperty.PropertyName, source: RelativeBindingSource.TemplatedParent));
-
-        // Привяжем VerticalOptions и HorizontalOptions к новым свойствам TabView
-        SetBinding(VerticalOptionsProperty, new Binding(
-            nameof(TabView.HeaderItemVerticalOptions),
-            source: RelativeBindingSource.TemplatedParent));
-
-        SetBinding(HorizontalOptionsProperty, new Binding(
-            nameof(TabView.HeaderItemHorizontalOptions),
-            source: RelativeBindingSource.TemplatedParent));
-
-    }
-
-    private void Tap_Tapped(object? sender, EventArgs e)
-    {
-        if (!IsEnabled) return;
-
-        if (!IsSelected) IsSelected = true;
-    }
-
-    protected override void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-    {
-        base.OnPropertyChanged(propertyName);
-
-        if (propertyName == HideWhenDisabledProperty.PropertyName)
-        {
-            IsVisible = !HideWhenDisabled || IsEnabled;
-            return;
-        }
-
-        if (propertyName == HeaderContentProperty.PropertyName && HeaderContent is View content)
-        {
-            Children.Clear();
-            Children.Add(content);
-        }
-
-        if (HeaderContent is View) return;
-
-        else if (propertyName == IsSelectedProperty.PropertyName)
-        {
-            SetBinding(View.BackgroundColorProperty, new Binding(IsSelected
-                ? TabView.SelectedHeaderBackgroundColorProperty.PropertyName
-                : TabView.HeaderBackgroundColorProperty.PropertyName, source: RelativeBindingSource.TemplatedParent));
-        }
-        else if (propertyName == HeaderContentProperty.PropertyName
-            || propertyName == SelectedContentTemplateProperty.PropertyName
-            || propertyName == ContentTemplateProperty.PropertyName)
-        {
-            InitContent();
-        }
-    }
-
-    public virtual void InitContent()
-    {
-        var unselectedTemplate = ContentTemplate != null
-            ? (ContentTemplate is DataTemplateSelector selectorU ? selectorU.SelectTemplate(HeaderContent, null) : ContentTemplate)
-            : StringTemplate;
-
-        var selectedTemplate = SelectedContentTemplate != null
-            ? (SelectedContentTemplate is DataTemplateSelector selectorS ? selectorS.SelectTemplate(HeaderContent, null) : SelectedContentTemplate)
-            : unselectedTemplate;
-
-        var context = HeaderContent;
-        context ??= "Empty Header";
-
-        SelectedView = selectedTemplate.CreateContent() as View;
-        SelectedView!.BindingContext = selectedTemplate == StringTemplate ? context.ToString() : context;
-
-        UnselectedView = unselectedTemplate.CreateContent() as View;
-        UnselectedView!.BindingContext = unselectedTemplate == StringTemplate ? context.ToString() : context;
-
-        SelectedView.SetBinding(View.IsVisibleProperty, new Binding(IsSelectedProperty.PropertyName, source: this));
-        UnselectedView.SetBinding(View.IsVisibleProperty, new Binding(IsSelectedProperty.PropertyName, source: this, converter: new InverseBooleanConverter()));
-
-        Children.Clear();
-        Children.Add(SelectedView);
-        Children.Add(UnselectedView);
-    }
-
-    #region IsSelected
-    public bool IsSelected
-    {
-        get { return (bool)GetValue(IsSelectedProperty); }
-        set { SetValue(IsSelectedProperty, value); }
-    }
-
-    public static readonly BindableProperty IsSelectedProperty =
-        BindableProperty.Create(
-            nameof(IsSelected),
-            typeof(bool),
-            typeof(TabViewHeaderItem)
-            );
-    #endregion
-
-    #region HeaderContent
-    public object HeaderContent
-    {
-        get { return (object)GetValue(HeaderContentProperty); }
-        set { SetValue(HeaderContentProperty, value); }
-    }
-
-    public static readonly BindableProperty HeaderContentProperty =
-        BindableProperty.Create(
-            nameof(HeaderContent),
-            typeof(object),
-            typeof(TabViewHeaderItem)
-            );
-    #endregion
-
-    #region SelectedContentTemplate
-    public DataTemplate SelectedContentTemplate
-    {
-        get { return (DataTemplate)GetValue(SelectedContentTemplateProperty); }
-        set { SetValue(SelectedContentTemplateProperty, value); }
-    }
-
-    public static readonly BindableProperty SelectedContentTemplateProperty =
-        BindableProperty.Create(
-            nameof(SelectedContentTemplate),
-            typeof(DataTemplate),
-            typeof(TabViewHeaderItem)
-            );
-    #endregion
-
-    #region ContentTemplate
-    public DataTemplate ContentTemplate
-    {
-        get { return (DataTemplate)GetValue(ContentTemplateProperty); }
-        set { SetValue(ContentTemplateProperty, value); }
-    }
-
-    public static readonly BindableProperty ContentTemplateProperty =
-        BindableProperty.Create(
-            nameof(ContentTemplate),
-            typeof(DataTemplate),
-            typeof(TabViewHeaderItem)
-            );
-    #endregion
-
-    #region HideWhenDisabled
-    public bool HideWhenDisabled
-    {
-        get { return (bool)GetValue(HideWhenDisabledProperty); }
-        set { SetValue(HideWhenDisabledProperty, value); }
-    }
-
-    public static readonly BindableProperty HideWhenDisabledProperty =
-        BindableProperty.Create(
-            nameof(HideWhenDisabled),
-            typeof(bool),
-            typeof(TabViewHeaderItem),
-            true
-            );
-    #endregion
-}
-
-Файл: PipeProfileAppMaui\MPowerKit.TabView\TabViewItem.cs
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-namespace MPowerKit.TabView;
-
-public class TabViewItem : ContentView
-{
-    public TabViewHeaderItem TabViewHeaderItem { get; protected set; } = [];
-
-    public TabViewItem()
-    {
-        TabViewHeaderItem.PropertyChanged += TabViewHeaderItem_PropertyChanged;
-
-        SetBinding(IsVisibleProperty, new Binding(IsSelectedProperty.PropertyName, source: this));
-        TabViewHeaderItem.SetBinding(View.IsEnabledProperty, new Binding(IsEnabledProperty.PropertyName, mode: BindingMode.TwoWay, source: this));
-        TabViewHeaderItem.SetBinding(TabViewHeaderItem.HeaderContentProperty, new Binding(HeaderProperty.PropertyName, source: this));
-        TabViewHeaderItem.SetBinding(Grid.ColumnProperty, new Binding(ColumnProperty.PropertyName, source: this));
-        TabViewHeaderItem.SetBinding(Grid.RowProperty, new Binding(RowProperty.PropertyName, source: this));
-    }
-
-    private void TabViewHeaderItem_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == TabViewHeaderItem.IsSelectedProperty.PropertyName)
-        {
-            IsSelected = TabViewHeaderItem.IsSelected;
-        }
-    }
-
-    protected override void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-    {
-        base.OnPropertyChanged(propertyName);
-
-        if (propertyName == IsEnabledProperty.PropertyName
-            || propertyName == IsSelectedProperty.PropertyName
-            && !IsEnabled && IsSelected)
-        {
-            IsSelected = false;
-        }
-
-        if (propertyName == IsSelectedProperty.PropertyName)
-        {
-            TabViewHeaderItem.IsSelected = IsSelected;
-        }
-    }
-
-    #region IsSelected
-    public bool IsSelected
-    {
-        get { return (bool)GetValue(IsSelectedProperty); }
-        set { SetValue(IsSelectedProperty, value); }
-    }
-
-    public static readonly BindableProperty IsSelectedProperty =
-        BindableProperty.Create(
-            nameof(IsSelected),
-            typeof(bool),
-            typeof(TabViewItem)
-            );
-    #endregion
-
-    #region Header
-    public object Header
-    {
-        get { return (object)GetValue(HeaderProperty); }
-        set { SetValue(HeaderProperty, value); }
-    }
-
-    public static readonly BindableProperty HeaderProperty =
-        BindableProperty.Create(
-            nameof(Header),
-            typeof(object),
-            typeof(TabViewItem)
-            );
-    #endregion
-
-    #region Column
-    public int Column
-    {
-        get { return (int)GetValue(ColumnProperty); }
-        set { SetValue(ColumnProperty, value); }
-    }
-
-    public static readonly BindableProperty ColumnProperty =
-        BindableProperty.Create(
-            nameof(Column),
-            typeof(int),
-            typeof(TabViewItem)
-            );
-    #endregion
-
-    #region Row
-    public int Row
-    {
-        get { return (int)GetValue(RowProperty); }
-        set { SetValue(RowProperty, value); }
-    }
-
-    public static readonly BindableProperty RowProperty =
-        BindableProperty.Create(
-            nameof(Row),
-            typeof(int),
-            typeof(TabViewItem)
-            );
-    #endregion
-}
-
-Файл: PipeProfileAppMaui\MPowerKit.TabView\TabViewStyle.xaml
-<?xml version="1.0" encoding="utf-8" ?>
-<ResourceDictionary x:Class="MPowerKit.TabView.TabViewStyle"
-                    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-                    xmlns:controls="clr-namespace:MPowerKit.TabView">
-
-    <Style TargetType="controls:TabView">
-        <Setter Property="Padding"
-                Value="0" />
-        <Setter Property="Margin"
-                Value="0" />
-        <Setter Property="ControlTemplate">
-            <Setter.Value>
-                <ControlTemplate>
-                    <Grid ColumnSpacing="0"
-                          RowSpacing="0">
-                        <Grid.Triggers>
-                            <DataTrigger Binding="{TemplateBinding HeaderBarAlignment}"
-                                         TargetType="Grid"
-                                         Value="Top">
-                                <Setter Property="RowDefinitions"
-                                        Value="Auto,*" />
-                                <Setter Property="ColumnDefinitions"
-                                        Value="*" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{TemplateBinding HeaderBarAlignment}"
-                                         TargetType="Grid"
-                                         Value="Bottom">
-                                <Setter Property="RowDefinitions"
-                                        Value="*,Auto" />
-                                <Setter Property="ColumnDefinitions"
-                                        Value="*" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{TemplateBinding HeaderBarAlignment}"
-                                         TargetType="Grid"
-                                         Value="Left">
-                                <Setter Property="RowDefinitions"
-                                        Value="*" />
-                                <Setter Property="ColumnDefinitions"
-                                        Value="Auto,*" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{TemplateBinding HeaderBarAlignment}"
-                                         TargetType="Grid"
-                                         Value="Right">
-                                <Setter Property="RowDefinitions"
-                                        Value="*" />
-                                <Setter Property="ColumnDefinitions"
-                                        Value="*,Auto" />
-                            </DataTrigger>
-                        </Grid.Triggers>
-                        <ScrollView x:Name="PART_HeadersScrollView"
-                                    Margin="{TemplateBinding Padding}"
-                                    BackgroundColor="{TemplateBinding HeaderBarBackgroundColor}"
-                                    HorizontalOptions="Fill"
-                                    HorizontalScrollBarVisibility="Never"
-                                    VerticalOptions="Fill"
-                                    VerticalScrollBarVisibility="Never">
-                            <ScrollView.Triggers>
-                                <!-- Горизонтальная шапка сверху -->
-                                <DataTrigger Binding="{TemplateBinding HeaderBarAlignment}"
-                                         TargetType="ScrollView"
-                                         Value="Top">
-                                    <Setter Property="Orientation" Value="Horizontal" />
-                                    <Setter Property="Grid.Row" Value="0" />
-                                    <Setter Property="Grid.Column" Value="0" />
-                                    <Setter Property="HeightRequest" Value="{TemplateBinding HeaderHeightRequest}" />
-                                </DataTrigger>
-
-                                <!-- Горизонтальная шапка снизу -->
-                                <DataTrigger Binding="{TemplateBinding HeaderBarAlignment}"
-                                         TargetType="ScrollView"
-                                         Value="Bottom">
-                                    <Setter Property="Orientation" Value="Horizontal" />
-                                    <Setter Property="Grid.Row" Value="1" />
-                                    <Setter Property="Grid.Column" Value="0" />
-                                    <Setter Property="HeightRequest" Value="{TemplateBinding HeaderHeightRequest}" />
-                                </DataTrigger>
-
-                                <!-- Вертикальная панель слева -->
-                                <DataTrigger Binding="{TemplateBinding HeaderBarAlignment}"
-                                         TargetType="ScrollView"
-                                         Value="Left">
-                                    <Setter Property="Orientation" Value="Vertical" />
-                                    <Setter Property="Grid.Row" Value="0" />
-                                    <Setter Property="Grid.Column" Value="0" />
-                                    <Setter Property="WidthRequest" Value="{TemplateBinding HeaderHeightRequest}" />
-                                </DataTrigger>
-
-                                <!-- Вертикальная панель справа -->
-                                <DataTrigger Binding="{TemplateBinding HeaderBarAlignment}"
-                                         TargetType="ScrollView"
-                                         Value="Right">
-                                    <Setter Property="Orientation" Value="Vertical" />
-                                    <Setter Property="Grid.Row" Value="0" />
-                                    <Setter Property="Grid.Column" Value="1" />
-                                    <Setter Property="WidthRequest" Value="{TemplateBinding HeaderHeightRequest}" />
-                                </DataTrigger>
-                            </ScrollView.Triggers>
-
-                            <controls:ItemsPresenter />
-                        </ScrollView>
-                        <Grid x:Name="PART_ContentContainer"
-                              Grid.Row="1"
-                              Margin="{TemplateBinding Padding}"
-                              BackgroundColor="{TemplateBinding ContentBackgroundColor}">
-                            <Grid.Triggers>
-                                <DataTrigger Binding="{TemplateBinding HeaderBarAlignment}"
-                                             TargetType="Grid"
-                                             Value="Top">
-                                    <Setter Property="Grid.Row"
-                                            Value="1" />
-                                    <Setter Property="Grid.Column"
-                                            Value="0" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{TemplateBinding HeaderBarAlignment}"
-                                             TargetType="Grid"
-                                             Value="Bottom">
-                                    <Setter Property="Grid.Row"
-                                            Value="0" />
-                                    <Setter Property="Grid.Column"
-                                            Value="0" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{TemplateBinding HeaderBarAlignment}"
-                                             TargetType="Grid"
-                                             Value="Left">
-                                    <Setter Property="Grid.Row"
-                                            Value="0" />
-                                    <Setter Property="Grid.Column"
-                                            Value="1" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{TemplateBinding HeaderBarAlignment}"
-                                             TargetType="Grid"
-                                             Value="Right">
-                                    <Setter Property="Grid.Row"
-                                            Value="0" />
-                                    <Setter Property="Grid.Column"
-                                            Value="0" />
-                                </DataTrigger>
-                            </Grid.Triggers>
-                        </Grid>
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-</ResourceDictionary>
-
-Файл: PipeProfileAppMaui\MPowerKit.TabView\TabViewStyle.xaml.cs
-namespace MPowerKit.TabView;
-
-public partial class TabViewStyle
-{
-    public TabViewStyle()
-    {
-        InitializeComponent();
-    }
-}
-
-Файл: PipeProfileAppMaui\Services\GroundCurveRenderer.cs
+Файл: ProfileApp\Services\GroundCurveRenderer.cs
 // File: Services/GroundCurveRenderer.cs
 using System.Collections.Generic;
 using SkiaSharp;
@@ -5510,7 +4351,7 @@ namespace PipeProfileAppMaui.Services
                 var gp = groundPoints[i];
                 var worldPt = new SKPoint(
                     (float)gp.Distance_m,
-                    (float)gp.Elevation_cm);
+                    (float)gp.Elevation_M);
 
                 if (i == 0) path.MoveTo(worldPt);
                 else path.LineTo(worldPt);
@@ -5521,14 +4362,14 @@ namespace PipeProfileAppMaui.Services
             canvas.DrawPath(devPath, _linePaint);
 
             // высота первой точки
-            float baseElev = (float)groundPoints[0].Elevation_cm;
+            float baseElev = (float)groundPoints[0].Elevation_M;
 
             // 2) В опорных точках – кружки + подписи
             foreach (var gp in groundPoints)
             {
                 var worldPt = new SKPoint(
                     (float)gp.Distance_m,
-                    (float)gp.Elevation_cm);
+                    (float)gp.Elevation_M);
 
                 // device‐координата
                 var devPt = worldToDev.MapPoint(worldPt);
@@ -5538,7 +4379,7 @@ namespace PipeProfileAppMaui.Services
                if (showMarkers) canvas.DrawCircle(devPt, R, _circlePaint);
 
                 // вычисляем дельту высоты
-                float delta = (float)(gp.Elevation_cm - baseElev) / 100;
+                float delta = (float)(gp.Elevation_M - baseElev) ;
                 string text = $"{delta:F2}";
 
                 // точка над кружком
@@ -5553,7 +4394,7 @@ namespace PipeProfileAppMaui.Services
     }
 }
 
-Файл: PipeProfileAppMaui\Services\IPipeRenderer.cs
+Файл: ProfileApp\Services\IPipeRenderer.cs
 using SkiaSharp;
 using System.Collections.ObjectModel;
 using PipeProfileAppMaui.Models;
@@ -5575,7 +4416,195 @@ namespace PipeProfileAppMaui.Services
     }
 }
 
-Файл: PipeProfileAppMaui\Services\PipeCenterlineRenderer.cs
+Файл: ProfileApp\Services\PipeAxisRenderer.cs
+using PipeProfileAppMaui.Helpers;
+using PipeProfileAppMaui.Models;
+using SkiaSharp;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PipeProfileAppMaui.Services
+{
+    public class PipeAxisRenderer
+    {
+        // ГОСТ-паттерн в миллиметрах
+        private readonly float[] _dashPatternMm = { 8f, 4f };
+
+        // кисть для пунктирной линии
+        private readonly SKPaint _dashPaint = new()
+        {
+            Style = SKPaintStyle.Stroke,
+            Color = SKColors.Red,
+            StrokeWidth = 1,
+            IsAntialias = true
+        };
+
+        // кисти для маркеров
+        private readonly SKPaint _markerPaint = new() { Style = SKPaintStyle.Fill, Color = SKColors.Yellow, IsAntialias = true };
+        private readonly SKPaint _tangentPaint = new() { Style = SKPaintStyle.Stroke, Color = SKColors.DarkBlue, StrokeWidth = 2, IsAntialias = true };
+        private readonly SKPaint _textPaint = new() { Style = SKPaintStyle.Fill, Color = SKColors.Black, TextSize = 8, IsAntialias = true };
+
+        /// <summary>
+        /// Рисует осевую пунктирную линию трубы и (по желанию) маркеры-касатели.
+        /// </summary>
+        public void Render(
+            SKCanvas canvas,
+            SKMatrix worldToDev,
+            IReadOnlyList<PipePoint> pipePoints,
+            Func<double, double> interpGroundElev,
+            bool showMarkers)
+        {
+            if (pipePoints.Count < 2 || PageConfig.PxPerMm == null)
+                return;
+
+            // 1) Формируем массив точек мира центральной оси
+            double ws = pipePoints[0].Distance_m;
+            double we = pipePoints.Last().Distance_m;
+            var worldPts = pipePoints
+                .Where(p => p.Distance_m >= ws && p.Distance_m <= we)
+                .Select(p => new SKPoint(
+                    (float)p.Distance_m,
+                    (float)(interpGroundElev(p.Distance_m) - p.Depth_M)))
+                .ToArray();
+            if (worldPts.Length < 2)
+                return;
+
+            // 2) Сглаживаем Catmull–Rom → Bezier
+            using var worldPath = PipeTangentRenderer.BuildSmoothPipePath(worldPts);
+
+            // 3) Считаем dash-эффект (мм → px по листу)
+            float pxPerMm = PageConfig.PxPerMm.Value;
+            var dashPx = new float[] { _dashPatternMm[0] * pxPerMm, _dashPatternMm[1] * pxPerMm };
+            _dashPaint.PathEffect = SKPathEffect.CreateDash(dashPx, 0);
+
+            // 4) Рисуем пунктирную ось уже в device
+            using var devPath = new SKPath();
+            worldPath.Transform(worldToDev, devPath);
+            canvas.DrawPath(devPath, _dashPaint);
+
+            if (!showMarkers)
+                return;
+
+            // 5) Собираем «мировые» данные по каждому 10-метровому шагу вдоль worldPath
+            var markers = SampleMarkerData(
+                worldPath,
+                stepMeters: 10f,
+                interpGroundElev,
+                pipeDepthFunc: d => InterpolatePipeDepth(pipePoints, d));
+
+            // 6) Проходим по всем маркерам, конвертируем координаты + рисуем
+            foreach (var m in markers)
+            {
+                var devPos = worldToDev.MapPoint(m.WorldPos);
+                var devTan = worldToDev.MapVector(m.WorldTan);
+                DrawTangentMarker(canvas, devPos, devTan, m.SlopePct, m.Depth);
+            }
+        }
+
+        /// <summary>
+        /// Вынесены все операции отрисовки одного жёлтого квадратика, касательной, цифр тангенса и глубины.
+        /// </summary>
+        private void DrawTangentMarker(
+            SKCanvas canvas,
+            SKPoint pos,
+            SKPoint tan,
+            float slope,
+            float depth)
+        {
+            const float half = 4f;
+
+            // жёлтый квадратик
+            var r = new SKRect(pos.X - half, pos.Y - half, pos.X + half, pos.Y + half);
+            canvas.DrawRect(r, _markerPaint);
+
+            // касательная длиной в два half
+            float len = tan.Length;
+            if (len > 0)
+            {
+                var unit = new SKPoint(tan.X / len, tan.Y / len);
+                var end = new SKPoint(pos.X + unit.X * half * 2, pos.Y + unit.Y * half * 2);
+                canvas.DrawLine(pos, end, _tangentPaint);
+
+                // цифра тангенса, умноженногт на 100 посередине над линией
+                canvas.DrawText($"tan={slope:F2}", end.X + half / 2, end.Y - half / 2, _textPaint);
+                // глубина посередине под линией
+                canvas.DrawText($"d={depth:F2}", end.X + half / 2, end.Y + _textPaint.TextSize + half / 2, _textPaint);
+            }
+        }
+
+        static double InterpolatePipeDepth(IReadOnlyList<PipePoint> pts, double d)
+        {
+            if (pts.Count == 0) return 0;
+            if (d <= pts[0].Distance_m) return pts[0].Depth_cm;
+            if (d >= pts[^1].Distance_m) return pts[^1].Depth_cm;
+            for (int i = 0; i < pts.Count - 1; i++)
+            {
+                var a = pts[i]; var b = pts[i + 1];
+                if (d >= a.Distance_m && d <= b.Distance_m)
+                {
+                    double t = (d - a.Distance_m) / (b.Distance_m - a.Distance_m);
+                    return a.Depth_cm + t * (b.Depth_cm - a.Depth_cm);
+                }
+            }
+            return pts[^1].Depth_cm;
+        }
+
+        /// <summary>
+        /// Пробегает по worldPath с шагом stepMeters и собирает список:
+        /// WorldPos, WorldTan (мировой тангенс!), уклон в %, глубину.
+        /// </summary>
+        static List<MarkerData> SampleMarkerData(
+            SKPath worldPath,
+            float stepMeters,
+            Func<double, double> interpGroundElev,
+            Func<double, double> pipeDepthFunc)
+        {
+            var list = new List<MarkerData>();
+            using var meas = new SKPathMeasure(worldPath, false);
+            float len = meas.Length;
+
+            for (float d = stepMeters; d <= len; d += stepMeters)
+            {
+                if (!meas.GetPositionAndTangent(d, out var pos, out var tan))
+                    continue;
+
+                double worldX = pos.X;
+                double ge = interpGroundElev(worldX);
+                double dp = pipeDepthFunc(worldX);
+                float depth = (float)dp;
+                // world Y = ge - dp => pos.Y
+                // уклон: dy/dx в мировых координатах *100%
+                float slopePct = tan.X != 0
+                    ? (tan.Y / tan.X) * 100f
+                    : 0f;
+
+                list.Add(new MarkerData
+                {
+                    WorldPos = pos,
+                    WorldTan = tan,
+                    SlopePct = slopePct,
+                    Depth = depth
+                });
+            }
+            return list;
+        }
+
+        class MarkerData
+        {
+            public SKPoint WorldPos { get; set; }
+            public SKPoint WorldTan { get; set; }
+            public float SlopePct { get; set; }
+            public float Depth { get; set; }
+        }
+
+    }
+}
+
+
+Файл: ProfileApp\Services\PipeCenterlineRenderer.cs
 // File: Services/PipeCenterlineRenderer.cs
 using System;
 using System.Collections.Generic;
@@ -5623,8 +4652,8 @@ namespace PipeProfileAppMaui.Services
                 return;
 
             // 1) Собираем мировые точки от start до end
-            double start = pipePoints[0].Distance_m + startOffset_m;
-            double end = start + totalLength_m;
+            double start = pipePoints[0].Distance_m;
+            double end = pipePoints.Last().Distance_m;
 
             var axisPts = pipePoints
                 .Where(p => p.Distance_m >= start && p.Distance_m <= end)
@@ -5650,7 +4679,7 @@ namespace PipeProfileAppMaui.Services
     }
 }
 
-Файл: PipeProfileAppMaui\Services\PipeCurveRenderer.cs
+Файл: ProfileApp\Services\PipeCurveRenderer.cs
 // File: Services/PipeCurveRenderer.cs
 using SkiaSharp;
 using PipeProfileAppMaui.Models;
@@ -5707,7 +4736,7 @@ namespace PipeProfileAppMaui.Services
     }
 }
 
-Файл: PipeProfileAppMaui\Services\PipeProfileRenderer.cs
+Файл: ProfileApp\Services\PipeProfileRenderer.cs
 using SkiaSharp;
 using PipeProfileAppMaui.ViewModels;
 using PipeProfileAppMaui.Models;
@@ -5821,116 +4850,116 @@ namespace PipeProfileAppMaui.Services
             _viewModel = viewModel;
         }
 
-        public void Draw(
-            SKCanvas canvas,
-            int width,
-            int height,
-            ObservableCollection<GroundPoint> groundPoints,
-            ObservableCollection<PipePoint> pipePoints,
-            float zoomLevel,
-            SKPoint panOffset)
-        {
-            if (_viewModel == null) return;
+        //public void Draw(
+        //    SKCanvas canvas,
+        //    int width,
+        //    int height,
+        //    ObservableCollection<GroundPoint> groundPoints,
+        //    ObservableCollection<PipePoint> pipePoints,
+        //    float zoomLevel,
+        //    SKPoint panOffset)
+        //{
+        //    if (_viewModel == null) return;
 
-            canvas.Clear(SKColors.White);
-            canvas.Save();
+        //    canvas.Clear(SKColors.White);
+        //    canvas.Save();
 
-            // Трансформация
-            canvas.Translate(PanX, PanY);
-            canvas.Scale(Zoom);
+        //    // Трансформация
+        //    canvas.Translate(PanX, PanY);
+        //    canvas.Scale(Zoom);
 
-            // Рисуем грунт (ломаная)
-            if (_viewModel.GroundVm.GroundPoints.Count >= 2)
-            {
-                using var paintG = new SKPaint { Color = SKColors.Brown, StrokeWidth = 3, IsStroke = true };
-                var pathG = new SKPath();
-                for (int i = 0; i < _viewModel.GroundVm.GroundPoints.Count; i++)
-                {
-                    var p = _viewModel.GroundVm.GroundPoints[i];
-                    float x = (float)(p.Distance_m * 5);
-                    float y = (float)(height - p.Elevation_cm * 2);
-                    if (i == 0) pathG.MoveTo(x, y);
-                    else pathG.LineTo(x, y);
-                }
-                canvas.DrawPath(pathG, paintG);
-            }
+        //    // Рисуем грунт (ломаная)
+        //    if (_viewModel.GroundVm.GroundPoints.Count >= 2)
+        //    {
+        //        using var paintG = new SKPaint { Color = SKColors.Brown, StrokeWidth = 3, IsStroke = true };
+        //        var pathG = new SKPath();
+        //        for (int i = 0; i < _viewModel.GroundVm.GroundPoints.Count; i++)
+        //        {
+        //            var p = _viewModel.GroundVm.GroundPoints[i];
+        //            float x = (float)(p.Distance_m * 5);
+        //            float y = (float)(height - p.Elevation_cm * 2);
+        //            if (i == 0) pathG.MoveTo(x, y);
+        //            else pathG.LineTo(x, y);
+        //        }
+        //        canvas.DrawPath(pathG, paintG);
+        //    }
 
-            // Рисуем трубу (кривые Безье)
-            if (_viewModel.PipeVm.PipePoints.Count >= 3)
-            {
-                var screenPoints = new List<SKPoint>();
-                foreach (var p in _viewModel.PipeVm.PipePoints)
-                {
-                    float x = (float)(p.Distance_m * 5);
-                    float groundElev = InterpolateGroundElevation(p.Distance_m);
-                    float y = (float)(height - (groundElev - p.Depth_cm) * 2);
-                    screenPoints.Add(new SKPoint(x, y));
-                }
+        //    // Рисуем трубу (кривые Безье)
+        //    if (_viewModel.PipeVm.PipePoints.Count >= 3)
+        //    {
+        //        var screenPoints = new List<SKPoint>();
+        //        foreach (var p in _viewModel.PipeVm.PipePoints)
+        //        {
+        //            float x = (float)(p.Distance_m * 5);
+        //            float groundElev = InterpolateGroundElevation(p.Distance_m);
+        //            float y = (float)(height - (groundElev - p.Depth_cm) * 2);
+        //            screenPoints.Add(new SKPoint(x, y));
+        //        }
 
-                using var paintP = new SKPaint { Color = SKColors.Blue, StrokeWidth = 4, IsStroke = true, IsAntialias = true };
-                var pathP = new SKPath();
-                pathP.MoveTo(screenPoints[0]);
+        //        using var paintP = new SKPaint { Color = SKColors.Blue, StrokeWidth = 4, IsStroke = true, IsAntialias = true };
+        //        var pathP = new SKPath();
+        //        pathP.MoveTo(screenPoints[0]);
 
-                for (int i = 0; i < screenPoints.Count - 1; i++)
-                {
-                    var p1 = screenPoints[i];
-                    var p2 = screenPoints[i + 1];
-                    var c1 = new SKPoint((p1.X + p2.X) / 2, p1.Y);
-                    var c2 = new SKPoint((p1.X + p2.X) / 2, p2.Y);
-                    pathP.CubicTo(c1, c2, p2);
-                }
-                canvas.DrawPath(pathP, paintP);
+        //        for (int i = 0; i < screenPoints.Count - 1; i++)
+        //        {
+        //            var p1 = screenPoints[i];
+        //            var p2 = screenPoints[i + 1];
+        //            var c1 = new SKPoint((p1.X + p2.X) / 2, p1.Y);
+        //            var c2 = new SKPoint((p1.X + p2.X) / 2, p2.Y);
+        //            pathP.CubicTo(c1, c2, p2);
+        //        }
+        //        canvas.DrawPath(pathP, paintP);
 
-                // Касательные каждые 30px
-                var measure = new SKPathMeasure(pathP, false);
-                float len = measure.Length;
-                var tanPaint = new SKPaint { Color = SKColors.Red, StrokeWidth = 2 };
-                var textPaint = new SKPaint { Color = SKColors.Black, TextSize = 12 / Zoom, IsAntialias = true };
+        //        // Касательные каждые 30px
+        //        var measure = new SKPathMeasure(pathP, false);
+        //        float len = measure.Length;
+        //        var tanPaint = new SKPaint { Color = SKColors.Red, StrokeWidth = 2 };
+        //        var textPaint = new SKPaint { Color = SKColors.Black, TextSize = 12 / Zoom, IsAntialias = true };
 
-                for (float d = 0; d < len; d += 30)
-                {
-                    if (measure.GetPositionAndTangent(d, out var pos, out var tan))
-                    {
-                        float l = SKPoint.Distance(new SKPoint(0, 0), tan);
-                        var unit = new SKPoint(tan.X / l, tan.Y / l);
-                        var end = new SKPoint(pos.X + unit.X * 10, pos.Y + unit.Y * 10);
-                        canvas.DrawLine(pos, end, tanPaint);
+        //        for (float d = 0; d < len; d += 30)
+        //        {
+        //            if (measure.GetPositionAndTangent(d, out var pos, out var tan))
+        //            {
+        //                float l = SKPoint.Distance(new SKPoint(0, 0), tan);
+        //                var unit = new SKPoint(tan.X / l, tan.Y / l);
+        //                var end = new SKPoint(pos.X + unit.X * 10, pos.Y + unit.Y * 10);
+        //                canvas.DrawLine(pos, end, tanPaint);
 
-                        double distanceAt = pos.X / 5f;
-                        float groundElev = InterpolateGroundElevation(distanceAt);
-                        float pipeElev = (height - pos.Y) / 2f;
-                        float depthAt = groundElev - pipeElev;
+        //                double distanceAt = pos.X / 5f;
+        //                float groundElev = InterpolateGroundElevation(distanceAt);
+        //                float pipeElev = (height - pos.Y) / 2f;
+        //                float depthAt = groundElev - pipeElev;
 
-                        var angleTan = unit.Y / unit.X;
-                        canvas.DrawText($"tan={angleTan:F2}", end.X + 5, end.Y - 5, textPaint);
-                        canvas.DrawText($"глуб={depthAt:F2}", end.X + 5, end.Y + 10, textPaint);
-                    }
-                }
-            }
+        //                var angleTan = unit.Y / unit.X;
+        //                canvas.DrawText($"tan={angleTan:F2}", end.X + 5, end.Y - 5, textPaint);
+        //                canvas.DrawText($"глуб={depthAt:F2}", end.X + 5, end.Y + 10, textPaint);
+        //            }
+        //        }
+        //    }
 
-            // Номера точек
-            if (ShowPointNumbers)
-            {
-                using var numPaint = new SKPaint { Color = SKColors.Black, TextSize = 14 / Zoom, IsAntialias = true };
-                for (int i = 0; i < _viewModel.PipeVm.PipePoints.Count; i++)
-                {
-                    var p = _viewModel.PipeVm.PipePoints[i];
-                    float x = (float)(p.Distance_m * 5);
-                    float groundElev = InterpolateGroundElevation(p.Distance_m);
-                    float y = (float)(height - (groundElev - p.Depth_cm) * 2);
-                    canvas.DrawText((i + 1).ToString(), x + 5 / Zoom, y - 5 / Zoom, numPaint);
-                }
-                for (int i = 0; i < _viewModel.GroundVm.GroundPoints.Count; i++)
-                {
-                    var gp = _viewModel.GroundVm.GroundPoints[i];
-                    float x = (float)(gp.Distance_m * 5);
-                    float y = (float)(canvas.TotalMatrix.ScaleY * (height - gp.Elevation_cm * 2));
-                    canvas.DrawText((i + 1).ToString(), x + (5 / Zoom), y - 5 / Zoom, numPaint);
-                }
-            }
+        //    // Номера точек
+        //    if (ShowPointNumbers)
+        //    {
+        //        using var numPaint = new SKPaint { Color = SKColors.Black, TextSize = 14 / Zoom, IsAntialias = true };
+        //        for (int i = 0; i < _viewModel.PipeVm.PipePoints.Count; i++)
+        //        {
+        //            var p = _viewModel.PipeVm.PipePoints[i];
+        //            float x = (float)(p.Distance_m * 5);
+        //            float groundElev = InterpolateGroundElevation(p.Distance_m);
+        //            float y = (float)(height - (groundElev - p.Depth_cm) * 2);
+        //            canvas.DrawText((i + 1).ToString(), x + 5 / Zoom, y - 5 / Zoom, numPaint);
+        //        }
+        //        for (int i = 0; i < _viewModel.GroundVm.GroundPoints.Count; i++)
+        //        {
+        //            var gp = _viewModel.GroundVm.GroundPoints[i];
+        //            float x = (float)(gp.Distance_m * 5);
+        //            float y = (float)(canvas.TotalMatrix.ScaleY * (height - gp.Elevation_cm * 2));
+        //            canvas.DrawText((i + 1).ToString(), x + (5 / Zoom), y - 5 / Zoom, numPaint);
+        //        }
+        //    }
 
-            canvas.Restore();
-        }
+        //    canvas.Restore();
+        //}
 
         private float InterpolateGroundElevation(double distance)
         {
@@ -5955,7 +4984,7 @@ namespace PipeProfileAppMaui.Services
     }
 }
 
-Файл: PipeProfileAppMaui\Services\PipeShapeRenderer.cs
+Файл: ProfileApp\Services\PipeShapeRenderer.cs
 // File: Services/PipeShapeRenderer.cs
 using System;
 using System.Collections.Generic;
@@ -5967,90 +4996,118 @@ namespace PipeProfileAppMaui.Services
 {
     public class PipeShapeRenderer
     {
-        private readonly double _startOffset;
-        private readonly double _totalLength;
-        private readonly float _diameterCm;
-        private readonly SKPaint _paint = new()
-        {
-            Style = SKPaintStyle.Stroke,
-            Color = SKColors.Blue,
-            StrokeWidth = 2,
-            IsAntialias = true
-        };
+        readonly float _radiusM;   // радиус трубы в метрах
+        readonly SKPaint _paint;   // кисть для границ
 
-        public PipeShapeRenderer(double startOffset_m,
-                                 double totalLength_m,
-                                 float diameter_cm)
+        public PipeShapeRenderer(float diameterCm)
         {
-            _startOffset = startOffset_m;
-            _totalLength = totalLength_m;
-            _diameterCm = diameter_cm;
+            _radiusM = diameterCm / 100f / 2f;
+            _paint = new SKPaint
+            {
+                Style = SKPaintStyle.Stroke,
+                Color = SKColors.Blue,
+                StrokeWidth = 2,
+                IsAntialias = true
+            };
         }
 
         public void Render(
             SKCanvas canvas,
             SKMatrix worldToDev,
             IReadOnlyList<PipePoint> pipePoints,
-            Func<double, double> interpElevation)
+            Func<double, double> interpGroundElev,
+            double startOffset_m,
+            double totalLength_m)
         {
             if (pipePoints.Count < 2)
                 return;
 
-            // 1) строим осевые точки в world-координатах
-            var axisPts = BuildAxisPoints(pipePoints, interpElevation);
-            if (axisPts.Count < 2)
-                return;
-
-            // 2) смещение вверх/вниз на радиус
-            float r = _diameterCm / 2f;
-            var upper = axisPts.Select(p => new SKPoint(p.X, p.Y + r)).ToArray();
-            var lower = axisPts.Select(p => new SKPoint(p.X, p.Y - r)).ToArray();
-
-            // 3) строим smoothed-paths
-            using var worldUp = PipeTangentRenderer.BuildSmoothPipePath(upper);
-            using var worldDn = PipeTangentRenderer.BuildSmoothPipePath(lower);
-            using var devUp = new SKPath();
-            using var devDn = new SKPath();
-
-            worldUp.Transform(worldToDev, devUp);
-            worldDn.Transform(worldToDev, devDn);
-
-            // 4) рисуем границы
-            canvas.DrawPath(devUp, _paint);
-            canvas.DrawPath(devDn, _paint);
-
-            // 5) получаем начала и концы через PathMeasure
-            var measUp = new SKPathMeasure(devUp, false);
-            var measDn = new SKPathMeasure(devDn, false);
-
-            measUp.GetPositionAndTangent(0, out var upStart, out _);
-            measDn.GetPositionAndTangent(0, out var dnStart, out _);
-            measUp.GetPositionAndTangent(measUp.Length, out var upEnd, out _);
-            measDn.GetPositionAndTangent(measDn.Length, out var dnEnd, out _);
-
-            // 6) соединяем вертикальными линиями
-            canvas.DrawLine(upStart, dnStart, _paint);
-            canvas.DrawLine(upEnd, dnEnd, _paint);
-        }
-
-        private List<SKPoint> BuildAxisPoints(
-            IReadOnlyList<PipePoint> pts,
-            Func<double, double> interpElevation)
-        {
-            double start = pts[0].Distance_m + _startOffset;
-            double end = start + _totalLength;
-
-            return pts
-                .Where(p => p.Distance_m >= start && p.Distance_m <= end)
+            // --- 1) Подготовка мирового пути центральной оси трубы ---
+            // Массив "мировых" точек оси
+            var worldPts = pipePoints
                 .Select(p => new SKPoint(
                     (float)p.Distance_m,
-                    (float)(interpElevation(p.Distance_m) - p.Depth_cm)))
-                .ToList();
+                    (float)(interpGroundElev(p.Distance_m) - p.Depth_M)))
+                .ToArray();
+
+            // Строим сглаженный путь в мировых координатах
+            using var worldPath = PipeTangentRenderer.BuildSmoothPipePath(worldPts);
+
+            // PathMeasure тоже по мировому пути
+            using var worldMeas = new SKPathMeasure(worldPath, false);
+            float worldLen = worldMeas.Length;
+
+            // --- 2) Трансформируем лишь центральный контур в экранные координаты ---
+            using var devCenter = new SKPath();
+            worldPath.Transform(worldToDev, devCenter);
+
+            // 3) Радиус трубы в мировых единицах (м)
+            float worldRadius = /* диаметрCm/100/2 */ 1.0f;
+
+            // Переводим этот радиус в пиксели экрана
+            // нормаль будет рисоваться от точки оси наружу на этот offset
+            SKPoint tmp = new SKPoint(0, worldRadius);
+            float radiusPx = worldToDev.MapVector(tmp).Length;
+
+            // --- 4) Семплим и строим верхнюю и нижнюю границы трубы ---
+            var devTop = new SKPath();
+            var devBottom = new SKPath();
+            bool first = true;
+
+            for (float d = (float)startOffset_m; d <= worldLen && d <= startOffset_m + totalLength_m; d += worldRadius)
+            {
+                if (!worldMeas.GetPositionAndTangent(d, out var wPos, out var wTan))
+                    continue;
+
+                // 4.1) Считаем экранную позицию точки оси
+                var devPos = worldToDev.MapPoint(wPos);
+
+                // 4.2) Считаем экранный вектор тангенса
+                var devTan = worldToDev.MapVector(wTan);
+
+                // 4.3) Нормализуем и получаем нормаль
+                if (devTan.Length == 0) continue;
+                var ux = devTan.X / devTan.Length;
+                var uy = devTan.Y / devTan.Length;
+                var nx = -uy;
+                var ny = ux;
+
+                // 4.4) Смещаемся наружу/внутрь на radiusPx
+                var upPt = new SKPoint(devPos.X + nx * radiusPx, devPos.Y + ny * radiusPx);
+                var downPt = new SKPoint(devPos.X - nx * radiusPx, devPos.Y - ny * radiusPx);
+
+                if (first)
+                {
+                    devTop.MoveTo(upPt);
+                    devBottom.MoveTo(downPt);
+                    first = false;
+                }
+                else
+                {
+                    devTop.LineTo(upPt);
+                    devBottom.LineTo(downPt);
+                }
+            }
+
+            // --- 5) Рисуем контуры трубы ---
+            canvas.DrawPath(devTop, _paint);
+            canvas.DrawPath(devBottom, _paint);
+
+            // --- 6) Закрывающие линии торцов ---
+            // (можно по аналогии найти первые/последние точки и замкнуть контур)
+            // 7) Закрывающие линии на торцах рисуются с учетом толщины линий трубы
+            float half = _paint.StrokeWidth / 2f;
+            var newStartUp = new SKPoint(devTop.Points[0].X, devTop.Points[0].Y + half);
+            var newStartDown = new SKPoint(devBottom.Points[0].X, devBottom.Points[0].Y - half);
+            var newEndUp = new SKPoint(devTop.LastPoint.X, devTop.LastPoint.Y + half);
+            var newEndDown = new SKPoint(devBottom.LastPoint.X, devBottom.LastPoint.Y - half);
+            canvas.DrawLine(newStartUp, newStartDown, _paint);
+            canvas.DrawLine(newEndUp, newEndDown, _paint);
         }
     }
 }
 
-Файл: PipeProfileAppMaui\Services\PipeTangentRenderer.cs
+Файл: ProfileApp\Services\PipeTangentRenderer.cs
 // File: Services/PipeTangentRenderer.cs
 using System;
 using System.Collections.Generic;
@@ -6064,6 +5121,11 @@ namespace PipeProfileAppMaui.Services
     public class PipeTangentRenderer
     {
         readonly Func<double, double> _interpElevation;
+
+        private readonly float[] _dashPattern;
+        private readonly float _patternSum;
+        private readonly SKPaint _dashPaint;
+
         readonly SKPaint _circlePaint = new()
         {
             Style = SKPaintStyle.Fill,
@@ -6089,82 +5151,6 @@ namespace PipeProfileAppMaui.Services
             TextSize = 12,
             IsAntialias = true
         };
-
-        public PipeTangentRenderer(Func<double, double> interpElevation)
-            => _interpElevation = interpElevation;
-
-        public void Render(
-            SKCanvas canvas,
-            SKMatrix worldToDev,
-            IReadOnlyList<PipePoint> pipePoints,
-            bool showMarkers)
-        {
-            if (pipePoints.Count < 1)
-                return;
-
-            // 1) Мировые опорные точки
-            var wPts = pipePoints
-                .Select(p => new SKPoint(
-                    (float)p.Distance_m,
-                    (float)(_interpElevation(p.Distance_m) - p.Depth_cm)))
-                .ToArray();
-
-            // 2) Красные кружки на ключевых точках
-            if (showMarkers)
-            {
-                foreach (var w in wPts)
-                {
-                    var d = worldToDev.MapPoint(w);
-                    canvas.DrawCircle(d, 5f, _circlePaint);
-                }
-            }
-
-            // 3) Построить и превратить путь
-            using var worldPath = BuildSmoothPipePath(wPts);
-            using var devPath = new SKPath();
-            worldPath.Transform(worldToDev, devPath);
-
-            // 4) Обратная матрица
-            worldToDev.TryInvert(out var devToWorld);
-            var meas = new SKPathMeasure(devPath, false);
-
-            // 5) Рисуем касательные
-            float step = 30f, tanLen = 10f;
-            for (float dist = 0; dist < meas.Length; dist += step)
-            {
-                if (!meas.GetPositionAndTangent(dist, out var pos, out var tan))
-                    continue;
-
-                // жёлтый квадратик
-                const float h = 4f;
-                var sq = new SKRect(
-                    pos.X - h, pos.Y - h,
-                    pos.X + h, pos.Y + h);
-                if (showMarkers) canvas.DrawRect(sq, _squarePaint);
-
-                // синяя касательная
-                float L = SKPoint.Distance(new SKPoint(), tan);
-                var unit = new SKPoint(tan.X / L, tan.Y / L);
-                var end = new SKPoint(
-                    pos.X + unit.X * tanLen,
-                    pos.Y + unit.Y * tanLen);
-                canvas.DrawLine(pos, end, _tangentPaint);
-
-                // подписи над и под квадратиком
-                var wp = devToWorld.MapPoint(pos);
-                double slope = unit.Y / unit.X;
-                double depth = _interpElevation(wp.X) - wp.Y;
-
-                // TextDrawingHelper.DrawText(canvas, text, location, paint)
-                var above = new SKPoint(sq.MidX, sq.Top - 2);
-                var below = new SKPoint(sq.MidX, sq.Bottom + _textPaint.FontSpacing + 2);
-                // draw above square
-                TextDrawingHelper.DrawTextAbovePoint(canvas, pos, $"{slope:F2}", 8);
-
-                // draw below square
-                TextDrawingHelper.DrawTextBelowPoint(canvas, pos, $"{depth:F2}", 8);
-            }
-        }
 
         /// <summary>
         /// Centripetal Catmull–Rom → Cubic Bezier без жёстких «i==0» веток.
@@ -6245,10 +5231,14 @@ namespace PipeProfileAppMaui.Services
 
             return path;
         }
+
+        
+        
+
     }
 }
 
-Файл: PipeProfileAppMaui\Services\ProfileRenderer.cs
+Файл: ProfileApp\Services\ProfileRenderer.cs
 // File: Services/ProfileRenderer.cs
 using System;
 using System.Collections.Generic;
@@ -6269,19 +5259,21 @@ namespace PipeProfileAppMaui.Services
         // Отступы вокруг профиля в «мире»
         // по горизонтали — 2 метра
         private const float HorizontalMarginM = 2f;
-        // по вертикали — 200 сантиметров
-        private const float VerticalMarginCm = 200f;
+        // по вертикали — 2  метра
+        private const float VerticalMarginM = 2f;
 
         private readonly PipeShapeRenderer _shapeRenderer;
         private readonly PipeCenterlineRenderer _centerlineRenderer;
+        private readonly PipeAxisRenderer _pipeAxisRenderer;
 
         public ProfileRenderer(MainViewModel vm)
         {
             double startOffset = 2.0;
             double totalLength = 40.0;
-            float diameterCm = 20f;
-            _shapeRenderer = new PipeShapeRenderer(startOffset, totalLength, diameterCm);
+            float diameterCm = 200f;
+            _shapeRenderer = new PipeShapeRenderer(diameterCm );
             _centerlineRenderer = new PipeCenterlineRenderer(new float[] { 4, 4 });
+            _pipeAxisRenderer = new PipeAxisRenderer();
         }
 
         public void Render(
@@ -6289,31 +5281,31 @@ namespace PipeProfileAppMaui.Services
             SKRect profileArea,
             IReadOnlyList<GroundPoint> groundPoints,
             IReadOnlyList<PipePoint> pipePoints,
-            Func<double, double> interpolateGroundElevation,
+            Func<double, double> interpolateGroundElevation_m,
             bool showMarkers)
         {
             if (groundPoints.Count < 2 || pipePoints.Count < 1)
                 return;
 
-            // 1) Исходные диапазоны по X (в метрах) и по Y (в сантиметрах)
+            // 1) Исходные диапазоны по X (в метрах) и по Y (в метрах)
             float rawMinX = groundPoints.Min(g => (float)g.Distance_m);
             float rawMaxX = groundPoints.Max(g => (float)g.Distance_m);
 
             float rawMinY = Math.Min(
-                groundPoints.Min(g => (float)g.Elevation_cm),
+                groundPoints.Min(g => (float)g.Elevation_M),
                 pipePoints.Min(p =>
-                    (float)(interpolateGroundElevation(p.Distance_m) - p.Depth_cm)));
+                    (float)(interpolateGroundElevation_m(p.Distance_m) - p.Depth_M)));
 
             float rawMaxY = Math.Max(
-                groundPoints.Max(g => (float)g.Elevation_cm),
+                groundPoints.Max(g => (float)g.Elevation_M),
                 pipePoints.Max(p =>
-                    (float)(interpolateGroundElevation(p.Distance_m) - p.Depth_cm)));
+                    (float)(interpolateGroundElevation_m(p.Distance_m) - p.Depth_M)));
 
             // 2) Применяем отступы
             float minX = rawMinX - HorizontalMarginM;
             float maxX = rawMaxX + HorizontalMarginM;
-            float minY = rawMinY - VerticalMarginCm;
-            float maxY = rawMaxY + VerticalMarginCm;
+            float minY = rawMinY - VerticalMarginM;
+            float maxY = rawMaxY + VerticalMarginM;
 
             // 3) Матрица world→device
             var worldToDev = DrawingHelpers.ComposeWorldToArea(
@@ -6324,6 +5316,7 @@ namespace PipeProfileAppMaui.Services
             // 4) Клип под рамку профиля
             canvas.Save();
             canvas.ClipRect(profileArea);
+
 
             // 5) Рисуем грунт
             var groundRenderer = new GroundCurveRenderer();
@@ -6339,17 +5332,18 @@ namespace PipeProfileAppMaui.Services
 
             // 2) Тело трубы (границы)
             _shapeRenderer.Render(
-               canvas, worldToDev, pipePoints, interpolateGroundElevation);
+               canvas, worldToDev, pipePoints, interpolateGroundElevation_m, 10, 45);
 
-            // 3) Штриховая центральная линия
-            _centerlineRenderer.Render(
-               canvas, worldToDev, pipePoints, interpolateGroundElevation,
-               startOffset_m: 2.0,
-               totalLength_m: 40.0);
+            // 3) Штриховая центральная линия и касательные с подписями
+            _pipeAxisRenderer.Render(canvas, worldToDev, pipePoints, interpolateGroundElevation_m, showMarkers);
+            //_centerlineRenderer.Render(
+            //   canvas, worldToDev, pipePoints, interpolateGroundElevation,
+            //   startOffset_m: 2.0,
+            //   totalLength_m: 40.0);
 
-            // 7) Рисуем касательные с подписями
-            var tangentRenderer = new PipeTangentRenderer(interpolateGroundElevation);
-            tangentRenderer.Render(canvas, worldToDev, pipePoints, showMarkers);
+            //// 7) Рисуем касательные с подписями
+            //var tangentRenderer = new PipeTangentRenderer(interpolateGroundElevation);
+            //tangentRenderer.Render(canvas, worldToDev, pipePoints, showMarkers);
 
              canvas.Restore();
 
@@ -6362,14 +5356,14 @@ namespace PipeProfileAppMaui.Services
                 canvas,
                 profileArea,
                 pipePoints,
-                interpolateGroundElevation
+                interpolateGroundElevation_m
             );
 
         }
     }
 }
 
-Файл: PipeProfileAppMaui\Services\ProfileTableRenderer.cs
+Файл: ProfileApp\Services\ProfileTableRenderer.cs
 // File: Services/ProfileTableRenderer.cs
 using System;
 using System.Collections.Generic;
@@ -6418,7 +5412,7 @@ namespace PipeProfileAppMaui.Services
             SKCanvas canvas,
             SKRect profileArea,
             IReadOnlyList<PipePoint> pipePoints,
-            Func<double, double> interpElevation)
+            Func<double, double> interpElevation_m)
         {
             int cols = pipePoints.Count;
             if (cols == 0)
@@ -6491,14 +5485,14 @@ namespace PipeProfileAppMaui.Services
                     {
                         string txt = r switch
                         {
-                            0 => interpElevation(xs[c]).ToString("F2"),
+                            0 => interpElevation_m(xs[c]).ToString("F2"),
                             1 => c == 0 ? "" : (xs[c] - xs[c - 1]).ToString("F2"),
                             2 => c == 0
                                   ? ""
-                                  : (100 * (interpElevation(xs[c]) - interpElevation(xs[c - 1]))
+                                  : (100 * (interpElevation_m(xs[c]) - interpElevation_m(xs[c - 1]))
                                      / (xs[c] - xs[c - 1]))
                                     .ToString("F1") + "%",
-                            3 => (interpElevation(xs[c]) - pipePoints[c].Depth_cm).ToString("F2"),
+                            3 => (interpElevation_m(xs[c]) - pipePoints[c].Depth_M).ToString("F2"),
                             _ => ""
                         };
 
@@ -6537,7 +5531,7 @@ namespace PipeProfileAppMaui.Services
     }
 }
 
-Файл: PipeProfileAppMaui\Transforms\ViewTransform.cs
+Файл: ProfileApp\Transforms\ViewTransform.cs
 // Transforms/ViewTransform.cs
 using SkiaSharp;
 
@@ -6584,7 +5578,7 @@ namespace PipeProfileAppMaui.Transforms
     }
 }
 
-Файл: PipeProfileAppMaui\ViewModels\GroundViewModel.cs
+Файл: ProfileApp\ViewModels\GroundViewModel.cs
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PipeProfileAppMaui.Models;
@@ -6634,14 +5628,14 @@ public partial class GroundViewModel : ObservableObject
         if (p.Distance_m > 0) p.Distance_m--;
     }
 
-    public double InterpolateGroundElevation(double distance)
+    public double InterpolateGroundElevation_m(double distance)
     {
         if (GroundPoints.Count == 0)
             return 0f;
         if (distance <= GroundPoints[0].Distance_m)
-            return (float)GroundPoints[0].Elevation_cm;
+            return (float)GroundPoints[0].Elevation_M;
         if (distance >= GroundPoints[^1].Distance_m)
-            return (float)GroundPoints[^1].Elevation_cm;
+            return (float)GroundPoints[^1].Elevation_M;
 
         for (int i = 0; i < GroundPoints.Count - 1; i++)
         {
@@ -6650,19 +5644,20 @@ public partial class GroundViewModel : ObservableObject
             if (distance >= p0.Distance_m && distance <= p1.Distance_m)
             {
                 float t = (float)((distance - p0.Distance_m) / (p1.Distance_m - p0.Distance_m));
-                return (1 - t) * (float)p0.Elevation_cm + t * (float)p1.Elevation_cm;
+                return (1 - t) * (float)p0.Elevation_M + t * (float)p1.Elevation_M;
             }
         }
-        return (double)GroundPoints[^1].Elevation_cm;
+        return (double)GroundPoints[^1].Elevation_M;
     }
 
 }
 
-Файл: PipeProfileAppMaui\ViewModels\MainViewModel.cs
+Файл: ProfileApp\ViewModels\MainViewModel.cs
 // File: Controls/MainViewModel.cs
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using PipeProfileAppMaui.Helpers;
 using PipeProfileAppMaui.Models;
 using PipeProfileAppMaui.Transforms;
@@ -6764,20 +5759,13 @@ namespace PipeProfileAppMaui.ViewModels
         }
 
         // Сохранить как pdf
+        // В любом общем пространстве имён
+        public record SavePdfMessage;
         [RelayCommand]
         public async Task SavePdfAsync()
         {
-            var file = Path.Combine(FileSystem.AppDataDirectory, "sheet.pdf");
-            using var doc = SKDocument.CreatePdf(file);
-            var canvas = doc.BeginPage(595, 842); // A4 в 72 DPI
-            //Draw(canvas, new SKImageInfo(595, 842));
-            doc.EndPage();
-            doc.Close();
-            var f = this.ToString();
-            await Shell.Current.DisplayAlert("PDF", $"Сохранено в:\n{file}", "OK");
+            WeakReferenceMessenger.Default.Send(new SavePdfMessage());
         }
-
-        // Загрузить из файла
         [RelayCommand]
         public async Task LoadFromFileAsync()
         {
@@ -6802,15 +5790,12 @@ namespace PipeProfileAppMaui.ViewModels
             public ObservableCollection<GroundPoint> GroundPoints { get; set; } = new();
             public ObservableCollection<PipePoint> PipePoints { get; set; } = new();
         }
-        /// <summary>
-        /// Рисует профиль: применяем Pan/Zoom и отрисовываем базовую сетку + линии.
-        /// </summary>
 
         // Вспомогательный метод для линейной интерполяции уровня грунта
     }
 }
 
-Файл: PipeProfileAppMaui\ViewModels\PipeViewModel.cs
+Файл: ProfileApp\ViewModels\PipeViewModel.cs
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PipeProfileAppMaui.Models;
@@ -6857,7 +5842,7 @@ public partial class PipeViewModel : ObservableObject
     }
 }
 
-Файл: PipeProfileAppMaui\ViewModels\RibbonButtonItem.cs
+Файл: ProfileApp\ViewModels\RibbonButtonItem.cs
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6916,7 +5901,7 @@ namespace PipeProfileAppMaui.ViewModels
 }
 
 
-Файл: PipeProfileAppMaui\ViewModels\RibbonItems.cs
+Файл: ProfileApp\ViewModels\RibbonItems.cs
 // в ViewModels/RibbonItems.cs
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -6948,7 +5933,7 @@ namespace PipeProfileAppMaui.ViewModels
     }
 }
 
-Файл: PipeProfileAppMaui\ViewModels\RibbonItemTemplateSelector.cs
+Файл: ProfileApp\ViewModels\RibbonItemTemplateSelector.cs
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6975,7 +5960,7 @@ namespace PipeProfileAppMaui.ViewModels
 }
 
 
-Файл: PipeProfileAppMaui\ViewModels\RibbonViewModel.cs
+Файл: ProfileApp\ViewModels\RibbonViewModel.cs
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
@@ -7043,7 +6028,7 @@ namespace PipeProfileAppMaui.ViewModels
     }
 }
 
-Файл: PipeProfileAppMaui\Platforms\Android\MainActivity.cs
+Файл: ProfileApp\Platforms\Android\MainActivity.cs
 using Android.App;
 using Android.Content.PM;
 using Android.OS;
@@ -7057,7 +6042,7 @@ namespace PipeProfileAppMaui
 }
 
 
-Файл: PipeProfileAppMaui\Platforms\Android\MainApplication.cs
+Файл: ProfileApp\Platforms\Android\MainApplication.cs
 using Android.App;
 using Android.Runtime;
 
@@ -7076,7 +6061,7 @@ namespace PipeProfileAppMaui
 }
 
 
-Файл: PipeProfileAppMaui\Platforms\iOS\AppDelegate.cs
+Файл: ProfileApp\Platforms\iOS\AppDelegate.cs
 using Foundation;
 
 namespace PipeProfileAppMaui
@@ -7089,7 +6074,7 @@ namespace PipeProfileAppMaui
 }
 
 
-Файл: PipeProfileAppMaui\Platforms\iOS\Program.cs
+Файл: ProfileApp\Platforms\iOS\Program.cs
 using ObjCRuntime;
 using UIKit;
 
@@ -7108,7 +6093,7 @@ namespace PipeProfileAppMaui
 }
 
 
-Файл: PipeProfileAppMaui\Platforms\MacCatalyst\AppDelegate.cs
+Файл: ProfileApp\Platforms\MacCatalyst\AppDelegate.cs
 using Foundation;
 
 namespace PipeProfileAppMaui
@@ -7121,7 +6106,7 @@ namespace PipeProfileAppMaui
 }
 
 
-Файл: PipeProfileAppMaui\Platforms\MacCatalyst\Program.cs
+Файл: ProfileApp\Platforms\MacCatalyst\Program.cs
 using ObjCRuntime;
 using UIKit;
 
@@ -7140,7 +6125,7 @@ namespace PipeProfileAppMaui
 }
 
 
-Файл: PipeProfileAppMaui\Platforms\Tizen\Main.cs
+Файл: ProfileApp\Platforms\Tizen\Main.cs
 using System;
 using Microsoft.Maui;
 using Microsoft.Maui.Hosting;
@@ -7160,7 +6145,7 @@ namespace PipeProfileAppMaui
 }
 
 
-Файл: PipeProfileAppMaui\Platforms\Windows\App.xaml
+Файл: ProfileApp\Platforms\Windows\App.xaml
 <maui:MauiWinUIApplication
     x:Class="PipeProfileAppMaui.WinUI.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -7171,7 +6156,7 @@ namespace PipeProfileAppMaui
 </maui:MauiWinUIApplication>
 
 
-Файл: PipeProfileAppMaui\Platforms\Windows\App.xaml.cs
+Файл: ProfileApp\Platforms\Windows\App.xaml.cs
 using Microsoft.UI.Xaml;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -7199,7 +6184,7 @@ namespace PipeProfileAppMaui.WinUI
 }
 
 
-Файл: PipeProfileAppMaui\Resources\Styles\Colors.xaml
+Файл: ProfileApp\Resources\Styles\Colors.xaml
 <?xml version="1.0" encoding="UTF-8" ?>
 <?xaml-comp compile="true" ?>
 <ResourceDictionary 
@@ -7246,7 +6231,7 @@ namespace PipeProfileAppMaui.WinUI
     <SolidColorBrush x:Key="Gray950Brush" Color="{StaticResource Gray950}"/>
 </ResourceDictionary>
 
-Файл: PipeProfileAppMaui\Resources\Styles\Styles.xaml
+Файл: ProfileApp\Resources\Styles\Styles.xaml
 <?xml version="1.0" encoding="UTF-8" ?>
 <?xaml-comp compile="true" ?>
 
@@ -7692,7 +6677,7 @@ namespace PipeProfileAppMaui.WinUI
 </ResourceDictionary>
 
 
-Файл: PipeProfileAppMaui\Resources\Styles\TabStyles.xaml
+Файл: ProfileApp\Resources\Styles\TabStyles.xaml
 <?xml version="1.0" encoding="UTF-8" ?>
 <?xaml-comp compile="true" ?>
 <ResourceDictionary 
